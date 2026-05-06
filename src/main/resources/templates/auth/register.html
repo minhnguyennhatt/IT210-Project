@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Đăng ký')}"></head>
+<body>
+<div class="auth-container">
+    <div class="auth-card" style="max-width:560px;">
+        <h1><i class="fas fa-user-plus"></i> Đăng ký tài khoản</h1>
+        <p class="subtitle">Tạo tài khoản mới để sử dụng hệ thống</p>
+
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/auth/register}" th:object="${registerRequest}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập *</label>
+                    <input type="text" id="username" th:field="*{username}" placeholder="vd: nguyenvana" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" th:field="*{email}" placeholder="vd: email@uni.edu.vn" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Họ và tên *</label>
+                <input type="text" id="fullName" th:field="*{fullName}" placeholder="Nguyễn Văn A" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Mật khẩu *</label>
+                    <input type="password" id="password" th:field="*{password}" placeholder="Tối thiểu 6 ký tự" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu *</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Nhập lại mật khẩu" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="role">Vai trò *</label>
+                <select id="role" th:field="*{role}" onchange="toggleLecturerFields()" required>
+                    <option value="">-- Chọn vai trò --</option>
+                    <option value="STUDENT">Sinh viên</option>
+                    <option value="LECTURER">Giảng viên</option>
+                </select>
+            </div>
+
+            <!-- Lecturer specific fields -->
+            <div id="lecturerFields" class="lecturer-field">
+                <div class="form-group">
+                    <label for="departmentId">Khoa/Ngành *</label>
+                    <select id="departmentId" th:field="*{departmentId}">
+                        <option value="">-- Chọn Khoa --</option>
+                        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="academicRank">Học hàm/Học vị</label>
+                        <input type="text" id="academicRank" th:field="*{academicRank}" placeholder="vd: Tiến sĩ">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialization">Chuyên ngành</label>
+                        <input type="text" id="specialization" th:field="*{specialization}" placeholder="vd: AI, Machine Learning">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Đăng ký</button>
+        </form>
+        <p class="auth-link">Đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></p>
+    </div>
+</div>
+
+<script>
+function toggleLecturerFields() {
+    var role = document.getElementById('role').value;
+    var fields = document.getElementById('lecturerFields');
+    if (role === 'LECTURER') {
+        fields.classList.add('show');
+    } else {
+        fields.classList.remove('show');
+    }
+}
+</script>
+</body>
+</html>

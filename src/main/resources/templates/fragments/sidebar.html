@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Smart Academic</span>
+    </div>
+    <ul class="sidebar-menu">
+        <!-- STUDENT -->
+        <li th:if="${currentUser != null && currentUser.role.name() == 'STUDENT'}">
+            <a th:href="@{/student/dashboard}" th:classappend="${#strings.contains(currentUri, '/student/dashboard')} ? 'active' : ''"><i class="fas fa-home"></i> Tổng quan</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'STUDENT'}">
+            <a th:href="@{/student/book}" th:classappend="${#strings.contains(currentUri, '/student/book')} ? 'active' : ''"><i class="fas fa-calendar-plus"></i> Đặt lịch tư vấn</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'STUDENT'}">
+            <a th:href="@{/student/sessions}" th:classappend="${#strings.contains(currentUri, '/student/sessions')} ? 'active' : ''"><i class="fas fa-calendar-check"></i> Lịch hẹn của tôi</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'STUDENT'}">
+            <a th:href="@{/student/academic-history}" th:classappend="${#strings.contains(currentUri, '/student/academic-history')} ? 'active' : ''"><i class="fas fa-history"></i> Lịch sử học thuật</a>
+        </li>
+
+        <!-- LECTURER -->
+        <li th:if="${currentUser != null && currentUser.role.name() == 'LECTURER'}">
+            <a th:href="@{/lecturer/dashboard}" th:classappend="${#strings.contains(currentUri, '/lecturer/dashboard')} ? 'active' : ''"><i class="fas fa-home"></i> Tổng quan</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'LECTURER'}">
+            <a th:href="@{/lecturer/pending-sessions}" th:classappend="${#strings.contains(currentUri, '/lecturer/pending')} ? 'active' : ''"><i class="fas fa-clipboard-list"></i> Chờ đánh giá</a>
+        </li>
+
+        <!-- ADMIN -->
+        <li th:if="${currentUser != null && currentUser.role.name() == 'ADMIN'}">
+            <a th:href="@{/admin/dashboard}" th:classappend="${#strings.contains(currentUri, '/admin/dashboard')} ? 'active' : ''"><i class="fas fa-home"></i> Tổng quan</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'ADMIN'}">
+            <a th:href="@{/admin/equipments}" th:classappend="${#strings.contains(currentUri, '/admin/equipments')} ? 'active' : ''"><i class="fas fa-tools"></i> Quản lý thiết bị</a>
+        </li>
+        <li th:if="${currentUser != null && currentUser.role.name() == 'ADMIN'}">
+            <a th:href="@{/admin/borrowings}" th:classappend="${#strings.contains(currentUri, '/admin/borrowings')} ? 'active' : ''"><i class="fas fa-box"></i> Quản lý phiếu mượn</a>
+        </li>
+
+        <!-- Common -->
+        <li th:if="${currentUser != null}">
+            <a th:href="@{/profile}" th:classappend="${#strings.contains(currentUri, '/profile')} ? 'active' : ''"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
+        </li>
+        <li th:if="${currentUser != null}" class="sidebar-logout">
+            <a th:href="@{/auth/logout}"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </li>
+    </ul>
+</nav>
+</html>

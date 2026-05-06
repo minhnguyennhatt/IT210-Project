@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Quản lý phiếu mượn', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header"><h1><i class="fas fa-box"></i> Quản lý Phiếu mượn Thiết bị</h1></div>
+
+    <!-- Pending -->
+    <div class="card" th:if="${pendingBorrowings != null && !pendingBorrowings.isEmpty()}">
+        <div class="card-header"><h2><i class="fas fa-exclamation-triangle" style="color:#fbbf24;"></i> Chờ cấp phát</h2></div>
+        <div th:each="b : ${pendingBorrowings}" style="border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;">
+            <div class="form-row" style="margin-bottom:0.5rem;">
+                <p><strong>Phiếu #<span th:text="${b.id}"></span></strong> | Sinh viên: <span th:text="${b.studentName}" style="color:#818cf8;"></span></p>
+                <p>Ngày mượn: <span th:text="${b.borrowDate}"></span> | Trả dự kiến: <span th:text="${b.expectedReturnDate}"></span></p>
+            </div>
+            <table th:if="${b.details != null && !b.details.isEmpty()}" style="margin-bottom:0.8rem;">
+                <thead><tr><th>Thiết bị</th><th>Mã</th><th>Yêu cầu</th><th>Tồn kho</th></tr></thead>
+                <tbody><tr th:each="d : ${b.details}">
+                    <td th:text="${d.equipmentName}"></td><td th:text="${d.equipmentCode}"></td>
+                    <td th:text="${d.quantity}"></td>
+                    <td th:text="${d.currentStock}" th:style="${d.currentStock < d.quantity} ? 'color:#f87171;font-weight:700' : 'color:#34d399'"></td>
+                </tr></tbody>
+            </table>
+            <div class="actions">
+                <form th:action="@{/admin/borrowings/{id}/approve(id=${b.id})}" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xuất kho?')">
+                    <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Xác nhận xuất kho</button>
+                </form>
+                <form th:action="@{/admin/borrowings/{id}/reject(id=${b.id})}" method="post" style="display:inline" onsubmit="return confirm('Từ chối phiếu mượn?')">
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i> Từ chối</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- All -->
+    <div class="card">
+        <div class="card-header"><h2><i class="fas fa-list"></i> Tất cả phiếu mượn</h2></div>
+        <div class="table-container" th:if="${borrowings != null && !borrowings.isEmpty()}">
+            <table>
+                <thead><tr><th>ID</th><th>Sinh viên</th><th>Ngày mượn</th><th>Trả dự kiến</th><th>Trạng thái</th></tr></thead>
+                <tbody><tr th:each="b : ${borrowings}">
+                    <td th:text="${b.id}"></td><td th:text="${b.studentName}"></td>
+                    <td th:text="${b.borrowDate}"></td><td th:text="${b.expectedReturnDate}"></td>
+                    <td>
+                        <span class="badge badge-pending" th:if="${b.status == 'PENDING_DISPATCH'}">Chờ cấp phát</span>
+                        <span class="badge badge-dispatched" th:if="${b.status == 'DISPATCHED'}">Đã xuất kho</span>
+                        <span class="badge badge-completed" th:if="${b.status == 'RETURNED'}">Đã trả</span>
+                        <span class="badge badge-cancelled" th:if="${b.status == 'REJECTED'}">Từ chối</span>
+                    </td>
+                </tr></tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${borrowings == null || borrowings.isEmpty()}"><i class="fas fa-inbox"></i><p>Chưa có phiếu mượn nào</p></div>
+    </div>
+</div>
+</html>

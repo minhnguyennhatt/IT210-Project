@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Đặt lịch tư vấn', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <h1><i class="fas fa-calendar-plus"></i> Đặt lịch Cố vấn Học thuật</h1>
+    </div>
+
+    <div class="card">
+        <form th:action="@{/student/book}" th:object="${createSessionRequest}" method="post">
+            <div class="form-group">
+                <label for="departmentId">Khoa / Ngành *</label>
+                <select id="departmentId" th:field="*{departmentId}" onchange="loadLecturers()" required>
+                    <option value="">-- Chọn Khoa/Ngành --</option>
+                    <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="lecturerId">Giảng viên *</label>
+                <select id="lecturerId" th:field="*{lecturerId}" required>
+                    <option value="">-- Chọn Giảng viên --</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sessionDate">Ngày tư vấn *</label>
+                    <input type="date" id="sessionDate" th:field="*{sessionDate}" required>
+                </div>
+                <div class="form-group">
+                    <label for="startTime">Giờ bắt đầu *</label>
+                    <select id="startTime" th:field="*{startTime}" required>
+                        <option value="">-- Chọn giờ --</option>
+                        <option value="07:00">07:00</option><option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option><option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option><option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option><option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option><option value="17:00">17:00</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="endTime">Giờ kết thúc *</label>
+                    <select id="endTime" th:field="*{endTime}" required>
+                        <option value="">-- Chọn giờ --</option>
+                        <option value="08:00">08:00</option><option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option><option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option><option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option><option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option><option value="18:00">18:00</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="note">Ghi chú</label>
+                <textarea id="note" th:field="*{note}" rows="3" placeholder="Nội dung cần tư vấn..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Đặt lịch</button>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+function loadLecturers() {
+    var deptId = document.getElementById('departmentId').value;
+    var lecturerSelect = document.getElementById('lecturerId');
+    lecturerSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
+    if (!deptId) { lecturerSelect.innerHTML = '<option value="">-- Chọn Giảng viên --</option>'; return; }
+
+    fetch('/student/api/lecturers?departmentId=' + deptId)
+        .then(r => r.json())
+        .then(data => {
+            lecturerSelect.innerHTML = '<option value="">-- Chọn Giảng viên --</option>';
+            data.forEach(l => {
+                var opt = document.createElement('option');
+                opt.value = l.id;
+                opt.textContent = l.user.fullName + ' (' + (l.academicRank || '') + ')';
+                lecturerSelect.appendChild(opt);
+            });
+        });
+}
+// Set min date to today
+document.addEventListener('DOMContentLoaded', function() {
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('sessionDate').setAttribute('min', today);
+});
+</script>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Tổng quan - Admin', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <div><h1>Bảng điều khiển Quản trị</h1><p class="welcome">Chào mừng, <span th:text="${user.fullName}">Admin</span></p></div>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-tools"></i></div>
+            <div class="stat-value" th:text="${totalEquipments}">0</div>
+            <div class="stat-label">Thiết bị</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange"><i class="fas fa-box"></i></div>
+            <div class="stat-value" th:text="${pendingBorrowings != null ? pendingBorrowings.size() : 0}">0</div>
+            <div class="stat-label">Phiếu mượn chờ duyệt</div>
+        </div>
+    </div>
+    <div class="card" th:if="${pendingBorrowings != null && !pendingBorrowings.isEmpty()}">
+        <div class="card-header"><h2><i class="fas fa-exclamation-triangle"></i> Phiếu mượn cần xử lý</h2>
+            <a th:href="@{/admin/borrowings}" class="btn btn-sm btn-primary">Xem tất cả</a></div>
+        <div class="table-container">
+            <table><thead><tr><th>ID</th><th>Sinh viên</th><th>Ngày mượn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody><tr th:each="b, i : ${pendingBorrowings}" th:if="${i.index < 5}">
+                    <td th:text="${b.id}"></td><td th:text="${b.studentName}"></td><td th:text="${b.borrowDate}"></td>
+                    <td><span class="badge badge-pending">Chờ cấp phát</span></td>
+                    <td><a th:href="@{/admin/borrowings}" class="btn btn-success btn-sm">Xử lý</a></td>
+                </tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

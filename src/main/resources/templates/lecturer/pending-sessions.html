@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Chờ đánh giá', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header"><h1><i class="fas fa-clipboard-list"></i> Sinh viên chờ đánh giá</h1></div>
+    <div class="card">
+        <div class="table-container" th:if="${sessions != null && !sessions.isEmpty()}">
+            <table>
+                <thead><tr><th>ID</th><th>Ngày</th><th>Giờ</th><th>Sinh viên</th><th>Ghi chú</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                <tr th:each="s : ${sessions}">
+                    <td th:text="${s.id}"></td>
+                    <td th:text="${s.sessionDate}"></td>
+                    <td th:text="${s.startTime + ' - ' + s.endTime}"></td>
+                    <td th:text="${s.studentName}"></td>
+                    <td th:text="${s.note}"></td>
+                    <td><a th:href="@{/lecturer/evaluate/{id}(id=${s.id})}" class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Đánh giá</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${sessions == null || sessions.isEmpty()}">
+            <i class="fas fa-inbox"></i><p>Không có sinh viên nào đang chờ đánh giá</p>
+        </div>
+    </div>
+</div>
+</html>

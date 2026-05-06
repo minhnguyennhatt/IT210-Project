@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Quản lý thiết bị', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <h1><i class="fas fa-tools"></i> Quản lý Thiết bị / Tài liệu</h1>
+        <a th:href="@{/admin/equipments/new}" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm thiết bị</a>
+    </div>
+    <div class="card">
+        <div class="table-container" th:if="${equipments != null && !equipments.isEmpty()}">
+            <table>
+                <thead><tr><th>Mã</th><th>Tên thiết bị</th><th>Mô tả</th><th>Tồn kho</th><th>Tối thiểu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                <tr th:each="equipment : ${equipments}">
+                    <td th:text="${equipment.code}"></td>
+                    <td th:text="${equipment.name}"></td>
+                    <td th:text="${equipment.description}" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></td>
+                    <td><span th:text="${equipment.quantityInStock}" th:style="${equipment.quantityInStock <= equipment.minimumStock} ? 'color:#f87171;font-weight:700' : ''"></span></td>
+                    <td th:text="${equipment.minimumStock}"></td>
+                    <td><span class="badge badge-completed" th:if="${equipment.isActive}">Hoạt động</span><span class="badge badge-cancelled" th:unless="${equipment.isActive}">Ngừng</span></td>
+                    <td class="actions">
+                        <a th:href="@{/admin/equipments/{id}/edit(id=${equipment.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                        <form th:action="@{/admin/equipments/{id}/delete(id=${equipment.id})}" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xóa?')">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${equipments == null || equipments.isEmpty()}"><i class="fas fa-toolbox"></i><p>Chưa có thiết bị nào</p></div>
+    </div>
+</div>
+</html>

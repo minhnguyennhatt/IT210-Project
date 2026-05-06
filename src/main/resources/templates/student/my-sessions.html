@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Lịch hẹn của tôi', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <h1><i class="fas fa-calendar-check"></i> Lịch hẹn của tôi</h1>
+        <a th:href="@{/student/book}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Đặt lịch mới</a>
+    </div>
+    <div class="card">
+        <div class="table-container" th:if="${sessions != null && !sessions.isEmpty()}">
+            <table>
+                <thead><tr><th>ID</th><th>Ngày</th><th>Giờ</th><th>Giảng viên</th><th>Khoa</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                <tr th:each="s : ${sessions}">
+                    <td th:text="${s.id}"></td>
+                    <td th:text="${s.sessionDate}"></td>
+                    <td th:text="${s.startTime + ' - ' + s.endTime}"></td>
+                    <td th:text="${s.lecturerName}"></td>
+                    <td th:text="${s.departmentName}"></td>
+                    <td>
+                        <span class="badge badge-pending" th:if="${s.status == 'PENDING'}">Chờ xác nhận</span>
+                        <span class="badge badge-completed" th:if="${s.status == 'COMPLETED'}">Hoàn thành</span>
+                        <span class="badge badge-cancelled" th:if="${s.status == 'CANCELLED'}">Đã hủy</span>
+                        <span class="badge badge-dispatched" th:if="${s.status == 'CONFIRMED'}">Đã xác nhận</span>
+                    </td>
+                    <td>
+                        <form th:if="${s.canCancel}" th:action="@{/student/sessions/{id}/cancel(id=${s.id})}" method="post" style="display:inline"
+                              onsubmit="return confirm('Bạn có chắc muốn hủy lịch này?')">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i> Hủy</button>
+                        </form>
+                        <span th:if="${!s.canCancel && s.status == 'PENDING'}" style="color:#64748b;font-size:0.8rem;">Không thể hủy (< 24h)</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${sessions == null || sessions.isEmpty()}">
+            <i class="fas fa-calendar-times"></i><p>Chưa có lịch hẹn nào</p>
+        </div>
+    </div>
+</div>
+</html>

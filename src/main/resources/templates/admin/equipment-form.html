@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Thiết bị', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header"><h1><i class="fas fa-tools"></i> <span th:text="${isEdit} ? 'Sửa thiết bị' : 'Thêm thiết bị mới'"></span></h1></div>
+    <div class="card">
+        <form th:action="${isEdit} ? @{/admin/equipments/{id}(id=${equipmentId})} : @{/admin/equipments}"
+              th:object="${equipmentRequest}" method="post">
+            <div class="form-row">
+                <div class="form-group"><label for="code">Mã thiết bị *</label><input type="text" id="code" th:field="*{code}" placeholder="VD: LAP-001" required></div>
+                <div class="form-group"><label for="name">Tên thiết bị *</label><input type="text" id="name" th:field="*{name}" placeholder="VD: Laptop Dell" required></div>
+            </div>
+            <div class="form-group"><label for="description">Mô tả</label><textarea id="description" th:field="*{description}" rows="3" placeholder="Mô tả chi tiết..."></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label for="quantityInStock">Số lượng tồn kho *</label><input type="number" id="quantityInStock" th:field="*{quantityInStock}" min="0" required></div>
+                <div class="form-group"><label for="minimumStock">Tồn kho tối thiểu</label><input type="number" id="minimumStock" th:field="*{minimumStock}" min="0"></div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> <span th:text="${isEdit} ? 'Cập nhật' : 'Thêm mới'"></span></button>
+            <a th:href="@{/admin/equipments}" class="btn btn-warning" style="margin-left:0.5rem;">Quay lại</a>
+        </form>
+    </div>
+</div>
+</html>

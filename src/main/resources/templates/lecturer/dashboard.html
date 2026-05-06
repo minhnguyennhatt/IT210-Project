@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Tổng quan - Giảng viên', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Xin chào, <span th:text="${user.fullName}">Giảng viên</span>!</h1>
+            <p class="welcome">Bảng điều khiển giảng viên</p>
+        </div>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon orange"><i class="fas fa-clipboard-list"></i></div>
+            <div class="stat-value" th:text="${pendingSessions != null ? pendingSessions.size() : 0}">0</div>
+            <div class="stat-label">Đang chờ đánh giá</div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-clock"></i> Sinh viên đang chờ tư vấn</h2>
+            <a th:href="@{/lecturer/pending-sessions}" class="btn btn-sm btn-primary">Xem tất cả</a>
+        </div>
+        <div class="table-container" th:if="${pendingSessions != null && !pendingSessions.isEmpty()}">
+            <table>
+                <thead><tr><th>Ngày</th><th>Giờ</th><th>Sinh viên</th><th>Ghi chú</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                <tr th:each="s, i : ${pendingSessions}" th:if="${i.index < 5}">
+                    <td th:text="${s.sessionDate}"></td>
+                    <td th:text="${s.startTime + ' - ' + s.endTime}"></td>
+                    <td th:text="${s.studentName}"></td>
+                    <td th:text="${s.note}"></td>
+                    <td><a th:href="@{/lecturer/evaluate/{id}(id=${s.id})}" class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Đánh giá</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${pendingSessions == null || pendingSessions.isEmpty()}">
+            <i class="fas fa-inbox"></i><p>Không có sinh viên nào đang chờ</p>
+        </div>
+    </div>
+</div>
+</html>

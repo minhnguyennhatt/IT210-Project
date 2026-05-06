@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Tổng quan - Sinh viên', ~{::content})}">
+<div th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Xin chào, <span th:text="${user.fullName}">Sinh viên</span>!</h1>
+            <p class="welcome">Chào mừng bạn đến với Smart Academic Platform</p>
+        </div>
+        <a th:href="@{/student/book}" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Đặt lịch mới</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-calendar-alt"></i></div>
+            <div class="stat-value" th:text="${sessions != null ? sessions.size() : 0}">0</div>
+            <div class="stat-label">Tổng lịch hẹn</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+            <div class="stat-value" th:text="${sessions != null ? sessions.stream().filter(s -> s.status == 'PENDING').count() : 0}">0</div>
+            <div class="stat-label">Đang chờ</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value" th:text="${sessions != null ? sessions.stream().filter(s -> s.status == 'COMPLETED').count() : 0}">0</div>
+            <div class="stat-label">Đã hoàn thành</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-calendar-check"></i> Lịch hẹn gần đây</h2>
+            <a th:href="@{/student/sessions}" class="btn btn-sm btn-primary">Xem tất cả</a>
+        </div>
+        <div class="table-container" th:if="${sessions != null && !sessions.isEmpty()}">
+            <table>
+                <thead><tr><th>Ngày</th><th>Giờ</th><th>Giảng viên</th><th>Khoa</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                <tr th:each="s, iter : ${sessions}" th:if="${iter.index < 5}">
+                    <td th:text="${s.sessionDate}"></td>
+                    <td th:text="${s.startTime + ' - ' + s.endTime}"></td>
+                    <td th:text="${s.lecturerName}"></td>
+                    <td th:text="${s.departmentName}"></td>
+                    <td>
+                        <span class="badge badge-pending" th:if="${s.status == 'PENDING'}">Chờ xác nhận</span>
+                        <span class="badge badge-completed" th:if="${s.status == 'COMPLETED'}">Hoàn thành</span>
+                        <span class="badge badge-cancelled" th:if="${s.status == 'CANCELLED'}">Đã hủy</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${sessions == null || sessions.isEmpty()}">
+            <i class="fas fa-calendar-times"></i>
+            <p>Chưa có lịch hẹn nào. Hãy đặt lịch tư vấn đầu tiên!</p>
+        </div>
+    </div>
+</div>
+</html>
