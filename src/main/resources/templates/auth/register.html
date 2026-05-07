@@ -5,13 +5,16 @@
 <div class="auth-container">
     <div class="auth-card" style="max-width:560px;">
         <h1><i class="fas fa-user-plus"></i> Đăng ký tài khoản</h1>
-        <p class="subtitle">Tạo tài khoản mới để sử dụng hệ thống</p>
+        <p class="subtitle">Tạo tài khoản sinh viên mới để sử dụng hệ thống</p>
 
         <div th:if="${errorMessage}" class="alert alert-error">
             <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
         </div>
 
         <form th:action="@{/auth/register}" th:object="${registerRequest}" method="post">
+            <!-- Hidden field: only STUDENT role allowed on public registration -->
+            <input type="hidden" th:field="*{role}" value="STUDENT"/>
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="username">Tên đăng nhập *</label>
@@ -36,34 +39,10 @@
                     <input type="password" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Nhập lại mật khẩu" required>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="role">Vai trò *</label>
-                <select id="role" th:field="*{role}" onchange="toggleLecturerFields()" required>
-                    <option value="">-- Chọn vai trò --</option>
-                    <option value="STUDENT">Sinh viên</option>
-                    <option value="LECTURER">Giảng viên</option>
-                </select>
-            </div>
 
-            <!-- Lecturer specific fields -->
-            <div id="lecturerFields" class="lecturer-field">
-                <div class="form-group">
-                    <label for="departmentId">Khoa/Ngành *</label>
-                    <select id="departmentId" th:field="*{departmentId}">
-                        <option value="">-- Chọn Khoa --</option>
-                        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="academicRank">Học hàm/Học vị</label>
-                        <input type="text" id="academicRank" th:field="*{academicRank}" placeholder="vd: Tiến sĩ">
-                    </div>
-                    <div class="form-group">
-                        <label for="specialization">Chuyên ngành</label>
-                        <input type="text" id="specialization" th:field="*{specialization}" placeholder="vd: AI, Machine Learning">
-                    </div>
-                </div>
+            <div class="form-group" style="background: #f0f4ff; padding: 12px 16px; border-radius: 8px; border: 1px solid #d0d8f0;">
+                <i class="fas fa-info-circle" style="color: #4a6cf7;"></i>
+                <span style="color: #4a6cf7; font-size: 14px;"> Tài khoản đăng ký mặc định là <strong>Sinh viên</strong>. Tài khoản Giảng viên do Quản trị viên tạo.</span>
             </div>
 
             <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Đăng ký</button>
@@ -71,17 +50,5 @@
         <p class="auth-link">Đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></p>
     </div>
 </div>
-
-<script>
-function toggleLecturerFields() {
-    var role = document.getElementById('role').value;
-    var fields = document.getElementById('lecturerFields');
-    if (role === 'LECTURER') {
-        fields.classList.add('show');
-    } else {
-        fields.classList.remove('show');
-    }
-}
-</script>
 </body>
 </html>

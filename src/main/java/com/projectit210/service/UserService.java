@@ -18,4 +18,8 @@ public interface UserService {
     List<User> findAll();
 
     List<User> findByRole(Role role);
+
+    User save(User user);
+
+    void deleteById(String id);
 }

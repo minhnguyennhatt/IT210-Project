@@ -53,9 +53,12 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Vai trò không hợp lệ");
         }
 
-        // Không cho phép đăng ký ADMIN qua form
+        // Chỉ cho phép đăng ký tài khoản Sinh viên. Giảng viên do Admin tạo.
         if (role == Role.ADMIN) {
             throw new BadRequestException("Không thể đăng ký tài khoản Admin");
+        }
+        if (role == Role.LECTURER) {
+            throw new BadRequestException("Không thể đăng ký tài khoản Giảng viên. Vui lòng liên hệ Quản trị viên.");
         }
 
         // Tạo user với mật khẩu đã hash (CORE-01: bắt buộc hash password)

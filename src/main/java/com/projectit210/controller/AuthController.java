@@ -4,7 +4,6 @@ import com.projectit210.dto.request.LoginRequest;
 import com.projectit210.dto.request.RegisterRequest;
 import com.projectit210.entity.User;
 import com.projectit210.exception.BadRequestException;
-import com.projectit210.repository.DepartmentRepository;
 import com.projectit210.security.JwtUtil;
 import com.projectit210.service.AuthService;
 import jakarta.servlet.http.Cookie;
@@ -28,7 +27,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
-    private final DepartmentRepository departmentRepository;
 
     @Value("${app.jwt.cookie-name}")
     private String cookieName;
@@ -72,8 +70,9 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("registerRequest", new RegisterRequest());
-        model.addAttribute("departments", departmentRepository.findAll());
+        RegisterRequest req = new RegisterRequest();
+        req.setRole("STUDENT"); // Mặc định chỉ cho đăng ký sinh viên
+        model.addAttribute("registerRequest", req);
         return "auth/register";
     }
 
@@ -82,8 +81,9 @@ public class AuthController {
                            BindingResult bindingResult,
                            Model model,
                            RedirectAttributes redirectAttributes) {
+        // Buộc role là STUDENT bất kể client gửi gì
+        registerRequest.setRole("STUDENT");
         if (bindingResult.hasErrors()) {
-            model.addAttribute("departments", departmentRepository.findAll());
             return "auth/register";
         }
         try {
@@ -92,7 +92,6 @@ public class AuthController {
             return "redirect:/auth/login";
         } catch (BadRequestException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("departments", departmentRepository.findAll());
             return "auth/register";
         }
     }

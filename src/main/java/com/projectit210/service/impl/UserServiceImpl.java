@@ -35,4 +35,14 @@ public class UserServiceImpl implements UserService {
     public List<User> findByRole(Role role) {
         return userRepository.findByRole(role);
     }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        userRepository.deleteById(id);
+    }
 }
