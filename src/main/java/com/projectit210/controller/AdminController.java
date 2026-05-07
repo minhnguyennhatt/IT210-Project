@@ -10,8 +10,10 @@ import com.projectit210.exception.BadRequestException;
 import com.projectit210.repository.DepartmentRepository;
 import com.projectit210.repository.LecturerRepository;
 import com.projectit210.service.BorrowingService;
+import com.projectit210.service.DepartmentService;
 import com.projectit210.service.EquipmentService;
 import com.projectit210.service.UserService;
+import com.projectit210.dto.request.DepartmentRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class AdminController {
     private final UserService userService;
     private final LecturerRepository lecturerRepository;
     private final DepartmentRepository departmentRepository;
+    private final DepartmentService departmentService;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/dashboard")
@@ -399,5 +402,84 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/borrowings";
+    }
+    // ===================== DEPARTMENT CRUD =====================
+
+    @GetMapping("/departments")
+    public String departmentList(Model model) {
+        model.addAttribute("departments", departmentService.findAll());
+        return "admin/departments";
+    }
+
+    @GetMapping("/departments/new")
+    public String newDepartmentForm(Model model) {
+        model.addAttribute("departmentRequest", new DepartmentRequest());
+        model.addAttribute("isEdit", false);
+        return "admin/department-form";
+    }
+
+    @PostMapping("/departments")
+    public String createDepartment(@Valid @ModelAttribute DepartmentRequest departmentRequest,
+                                  BindingResult bindingResult,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("isEdit", false);
+            return "admin/department-form";
+        }
+        try {
+            departmentService.create(departmentRequest);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm Khoa/Ngành thành công!");
+        } catch (BadRequestException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("isEdit", false);
+            return "admin/department-form";
+        }
+        return "redirect:/admin/departments";
+    }
+
+    @GetMapping("/departments/{id}/edit")
+    public String editDepartmentForm(@PathVariable Long id, Model model) {
+        Department dept = departmentService.findById(id);
+        DepartmentRequest request = DepartmentRequest.builder()
+                .code(dept.getCode()).name(dept.getName()).build();
+        model.addAttribute("departmentRequest", request);
+        model.addAttribute("departmentId", id);
+        model.addAttribute("isEdit", true);
+        return "admin/department-form";
+    }
+
+    @PostMapping("/departments/{id}")
+    public String updateDepartment(@PathVariable Long id,
+                                  @Valid @ModelAttribute DepartmentRequest departmentRequest,
+                                  BindingResult bindingResult,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("departmentId", id);
+            model.addAttribute("isEdit", true);
+            return "admin/department-form";
+        }
+        try {
+            departmentService.update(id, departmentRequest);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật Khoa/Ngành thành công!");
+        } catch (BadRequestException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("departmentId", id);
+            model.addAttribute("isEdit", true);
+            return "admin/department-form";
+        }
+        return "redirect:/admin/departments";
+    }
+
+    @PostMapping("/departments/{id}/delete")
+    public String deleteDepartment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            departmentService.delete(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa Khoa/Ngành thành công!");
+        } catch (BadRequestException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/departments";
     }
 }

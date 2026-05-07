@@ -52,9 +52,9 @@ public class LecturerController {
 
     @GetMapping("/evaluate/{sessionId}")
     public String evaluationForm(@PathVariable Long sessionId, Model model) {
-        MentoringSession session = sessionRepository.findById(sessionId)
+        MentoringSession mentoringSession = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Buổi tư vấn không tồn tại"));
-        model.addAttribute("session", session);
+        model.addAttribute("mentoringSession", mentoringSession);
         model.addAttribute("evaluationRequest", new EvaluationRequest());
         model.addAttribute("equipments", equipmentService.findAllActive());
         return "lecturer/evaluation-form";
