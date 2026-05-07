@@ -58,6 +58,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, org.springframework.web.servlet.ModelAndView modelAndView) throws Exception {
+        if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
+            modelAndView.addObject("requestURI", request.getRequestURI() != null ? request.getRequestURI() : "");
+        }
+    }
+
     private boolean isPublicPath(String path) {
         return path.equals("/") ||
                path.startsWith("/auth/") ||

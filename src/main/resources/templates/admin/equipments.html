@@ -1,33 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Quản lý thiết bị', ~{::content})}">
 <div th:fragment="content">
-    <div class="page-header">
-        <h1><i class="fas fa-tools"></i> Quản lý Thiết bị / Tài liệu</h1>
-        <a th:href="@{/admin/equipments/new}" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm thiết bị</a>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+            <i class="fas fa-tools text-indigo-400"></i> Quản lý Thiết bị / Tài liệu
+        </h1>
+        <a th:href="@{/admin/equipments/new}" class="btn-primary shrink-0 py-2 text-sm">
+            <i class="fas fa-plus"></i> Thêm thiết bị
+        </a>
     </div>
-    <div class="card">
+
+    <div class="glass-card overflow-hidden">
         <div class="table-container" th:if="${equipments != null && !equipments.isEmpty()}">
-            <table>
-                <thead><tr><th>Mã</th><th>Tên thiết bị</th><th>Mô tả</th><th>Tồn kho</th><th>Tối thiểu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th class="w-24">Mã</th>
+                        <th>Tên thiết bị</th>
+                        <th>Mô tả</th>
+                        <th>Tồn kho</th>
+                        <th>Tối thiểu</th>
+                        <th>Trạng thái</th>
+                        <th class="text-right">Thao tác</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr th:each="equipment : ${equipments}">
-                    <td th:text="${equipment.code}"></td>
-                    <td th:text="${equipment.name}"></td>
-                    <td th:text="${equipment.description}" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></td>
-                    <td><span th:text="${equipment.quantityInStock}" th:style="${equipment.quantityInStock <= equipment.minimumStock} ? 'color:#f87171;font-weight:700' : ''"></span></td>
-                    <td th:text="${equipment.minimumStock}"></td>
-                    <td><span class="badge badge-completed" th:if="${equipment.isActive}">Hoạt động</span><span class="badge badge-cancelled" th:unless="${equipment.isActive}">Ngừng</span></td>
-                    <td class="actions">
-                        <a th:href="@{/admin/equipments/{id}/edit(id=${equipment.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                        <form th:action="@{/admin/equipments/{id}/delete(id=${equipment.id})}" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xóa?')">
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr th:each="eq : ${equipments}">
+                        <td th:text="${eq.code}" class="text-indigo-300 font-mono text-sm font-semibold"></td>
+                        <td th:text="${eq.name}" class="font-medium text-slate-200"></td>
+                        <td th:text="${eq.description}" class="max-w-[200px] truncate text-slate-400"></td>
+                        <td>
+                            <span th:text="${eq.quantityInStock}" 
+                                  th:classappend="${eq.quantityInStock <= eq.minimumStock} ? 'text-rose-400 font-bold bg-rose-500/10 px-2 py-1 rounded-md' : 'text-slate-300'"></span>
+                        </td>
+                        <td th:text="${eq.minimumStock}" class="text-slate-400"></td>
+                        <td>
+                            <span class="badge-completed" th:if="${eq.isActive}">Hoạt động</span>
+                            <span class="badge-cancelled opacity-60" th:unless="${eq.isActive}">Ngừng</span>
+                        </td>
+                        <td class="text-right whitespace-nowrap">
+                            <a th:href="@{/admin/equipments/{id}/edit(id=${eq.id})}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors mr-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form th:action="@{/admin/equipments/{id}/delete(id=${eq.id})}" method="post" class="inline-block" onsubmit="return confirm('Xác nhận xóa?')">
+                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="empty-state" th:if="${equipments == null || equipments.isEmpty()}"><i class="fas fa-toolbox"></i><p>Chưa có thiết bị nào</p></div>
+        
+        <div class="py-16 text-center text-slate-400" th:if="${equipments == null || equipments.isEmpty()}">
+            <i class="fas fa-toolbox text-5xl opacity-30 mb-4"></i>
+            <p class="text-lg">Chưa có thiết bị nào</p>
+        </div>
     </div>
 </div>
 </html>

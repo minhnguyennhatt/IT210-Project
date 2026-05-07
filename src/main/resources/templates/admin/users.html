@@ -1,171 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Quản lý người dùng', ~{::content})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Quản lý Người dùng', ~{::content})}">
 <div th:fragment="content">
-    <div class="page-header">
-        <div><h1><i class="fas fa-users-cog"></i> Quản lý người dùng</h1></div>
-        <div style="display:flex; gap:8px;">
-            <a th:href="@{/admin/users/new(role='STUDENT')}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Thêm Sinh viên</a>
-            <a th:href="@{/admin/users/new(role='LECTURER')}" class="btn btn-success"><i class="fas fa-chalkboard-teacher"></i> Thêm Giảng viên</a>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+            <i class="fas fa-users text-indigo-400"></i> Quản lý Người dùng
+        </h1>
+        <div class="flex items-center gap-3">
+            <form th:action="@{/admin/users}" method="get" class="flex gap-2">
+                <select name="role" class="form-input py-2 text-sm [&>option]:bg-slate-800 border-indigo-500/20" onchange="this.form.submit()">
+                    <option value="" th:selected="${selectedRole == null}">Tất cả vai trò</option>
+                    <option value="STUDENT" th:selected="${selectedRole == 'STUDENT'}">Sinh viên</option>
+                    <option value="LECTURER" th:selected="${selectedRole == 'LECTURER'}">Giảng viên</option>
+                </select>
+            </form>
+            <a th:href="@{/admin/users/new(role=${selectedRole})}" class="btn-primary shrink-0 py-2 text-sm">
+                <i class="fas fa-user-plus"></i> Thêm người dùng
+            </a>
         </div>
     </div>
 
-    <!-- Toolbar: Filter tabs + Search -->
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <div class="filter-tabs">
-                <a th:href="@{/admin/users}" class="filter-tab" th:classappend="${selectedRole == null || selectedRole == ''} ? 'active'">
-                    <i class="fas fa-users"></i> Tất cả
-                </a>
-                <a th:href="@{/admin/users(role='STUDENT')}" class="filter-tab" th:classappend="${selectedRole == 'STUDENT'} ? 'active'">
-                    <i class="fas fa-user-graduate"></i> Sinh viên
-                </a>
-                <a th:href="@{/admin/users(role='LECTURER')}" class="filter-tab" th:classappend="${selectedRole == 'LECTURER'} ? 'active'">
-                    <i class="fas fa-chalkboard-teacher"></i> Giảng viên
-                </a>
-            </div>
-        </div>
-        <div class="toolbar-right">
-            <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="userSearch" placeholder="Tìm theo tên, email, username..." onkeyup="filterUsers()">
-            </div>
-        </div>
-    </div>
-
-    <!-- User Table -->
-    <div class="card">
-        <div class="card-header">
-            <h2><i class="fas fa-list" style="color: #818cf8; margin-right: 0.5rem;"></i> Danh sách người dùng</h2>
-            <span class="badge badge-purple" id="userCount" th:text="${#lists.size(users)} + ' người dùng'">0 người dùng</span>
-        </div>
-        <div class="table-container">
-            <table id="userTable">
+    <div class="glass-card overflow-hidden">
+        <div class="table-container" th:if="${users != null && !users.isEmpty()}">
+            <table class="table-custom">
                 <thead>
                     <tr>
-                        <th style="width: 25%;">Người dùng</th>
+                        <th class="w-12">#</th>
+                        <th>Họ và tên</th>
+                        <th>Tên đăng nhập</th>
                         <th>Email</th>
                         <th>Vai trò</th>
                         <th>Thông tin thêm</th>
                         <th>Trạng thái</th>
-                        <th style="width: 130px; text-align: center;">Thao tác</th>
+                        <th class="text-right">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="u : ${users}" class="user-row"
-                        th:attr="data-name=${u.fullName},data-username=${u.username},data-email=${u.email}">
+                    <tr th:each="u, stat : ${users}">
+                        <td th:text="${stat.count}" class="text-indigo-300 font-mono text-sm"></td>
+                        <td th:text="${u.fullName}" class="font-medium text-slate-200"></td>
+                        <td th:text="${u.username}" class="font-mono text-xs text-slate-400"></td>
+                        <td th:text="${u.email}"></td>
                         <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" th:classappend="${u.role.name() == 'STUDENT'} ? 'student' : 'lecturer'">
-                                    <span th:text="${u.fullName != null && !u.fullName.isEmpty()} ? ${#strings.substring(u.fullName, 0, 1)} : '?'">?</span>
-                                </div>
-                                <div class="user-cell-info">
-                                    <span class="name" th:text="${u.fullName ?: u.username}">Tên</span>
-                                    <span class="username">@<span th:text="${u.username}">username</span></span>
-                                </div>
-                            </div>
-                        </td>
-                        <td style="color: #94a3b8; font-size: 0.9rem;" th:text="${u.email}">email</td>
-                        <td>
-                            <span th:if="${u.role.name() == 'STUDENT'}" class="badge badge-info">
-                                <i class="fas fa-user-graduate"></i> Sinh viên
-                            </span>
-                            <span th:if="${u.role.name() == 'LECTURER'}" class="badge badge-success">
-                                <i class="fas fa-chalkboard-teacher"></i> Giảng viên
-                            </span>
+                            <span class="px-2 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" th:if="${u.role.name() == 'STUDENT'}">Sinh viên</span>
+                            <span class="px-2 py-1 rounded-md text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" th:if="${u.role.name() == 'LECTURER'}">Giảng viên</span>
                         </td>
                         <td>
-                            <span th:if="${u.role.name() == 'LECTURER'}">
-                                <span th:each="l : ${lecturerDetails}" th:if="${l.user.id == u.id}">
-                                    <div style="display:flex; flex-direction:column; gap:2px;">
-                                        <span style="color:#e2e8f0; font-size:0.9rem;" th:text="${l.department.name}">Khoa</span>
-                                        <span th:if="${l.academicRank}" class="badge badge-secondary" style="width: fit-content;" th:text="${l.academicRank}">Học hàm</span>
-                                    </div>
+                            <div th:if="${u.role.name() == 'LECTURER'}">
+                                <span th:each="ld : ${lecturerDetails}" th:if="${ld.user.id == u.id}" class="text-xs text-indigo-300">
+                                    <span th:text="${ld.department.name}"></span>
                                 </span>
-                            </span>
-                            <span th:if="${u.role.name() == 'STUDENT'}">
-                                <span th:if="${u.phone}" style="color:#94a3b8; font-size:0.9rem;">
-                                    <i class="fas fa-phone" style="font-size:0.75rem; margin-right:4px;"></i>
-                                    <span th:text="${u.phone}">Phone</span>
-                                </span>
-                                <span th:if="${u.phone == null}" style="color:#64748b; font-size:0.85rem;">—</span>
-                            </span>
-                        </td>
-                        <td>
-                            <span th:if="${u.isActive}" class="badge badge-success">
-                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Hoạt động
-                            </span>
-                            <span th:if="${!u.isActive}" class="badge badge-danger">
-                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Vô hiệu
-                            </span>
-                        </td>
-                        <td>
-                            <div style="display:flex; gap:6px; justify-content:center;">
-                                <a th:href="@{/admin/users/{id}/edit(id=${u.id})}" class="action-btn edit" title="Chỉnh sửa">
-                                    <i class="fas fa-pen"></i>
-                                </a>
-                                <form th:action="@{/admin/users/{id}/toggle-status(id=${u.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="action-btn"
-                                            th:classappend="${u.isActive} ? 'toggle-active' : 'toggle-inactive'"
-                                            th:title="${u.isActive} ? 'Vô hiệu hóa' : 'Kích hoạt'">
-                                        <i th:classappend="${u.isActive} ? 'fas fa-ban' : 'fas fa-check'"></i>
-                                    </button>
-                                </form>
-                                <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Bạn có chắc muốn xóa tài khoản này? Hành động này không thể hoàn tác.')">
-                                    <button type="submit" class="action-btn delete" title="Xóa">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
                             </div>
+                            <span th:if="${u.role.name() == 'STUDENT'}" class="text-slate-500 text-xs">-</span>
                         </td>
-                    </tr>
-                    <tr id="emptyRow" th:if="${#lists.isEmpty(users)}">
-                        <td colspan="6" class="empty-state">
-                            <i class="fas fa-users"></i>
-                            <p>Không có người dùng nào</p>
+                        <td>
+                            <span class="badge-completed" th:if="${u.isActive}">Hoạt động</span>
+                            <span class="badge-cancelled opacity-60" th:unless="${u.isActive}">Đã khóa</span>
                         </td>
-                    </tr>
-                    <!-- No search results row (hidden by default) -->
-                    <tr id="noSearchResults" style="display:none;">
-                        <td colspan="6" class="empty-state">
-                            <i class="fas fa-search"></i>
-                            <p>Không tìm thấy người dùng phù hợp</p>
+                        <td class="text-right whitespace-nowrap">
+                            <form th:action="@{/admin/users/{id}/toggle-status(id=${u.id})}" method="post" class="inline-block mr-2">
+                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-300 border border-slate-600 transition-colors" th:title="${u.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}">
+                                    <i class="fas" th:classappend="${u.isActive ? 'fa-lock' : 'fa-unlock'}"></i>
+                                </button>
+                            </form>
+                            <a th:href="@{/admin/users/{id}/edit(id=${u.id})}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-colors mr-2" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này không? Hành động này không thể hoàn tác!')">
+                                <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        
+        <div class="py-16 text-center text-slate-400" th:if="${users == null || users.isEmpty()}">
+            <i class="fas fa-users-slash text-5xl opacity-30 mb-4"></i>
+            <p class="text-lg">Không có người dùng nào được tìm thấy</p>
+        </div>
     </div>
-
-    <script>
-        function filterUsers() {
-            const query = document.getElementById('userSearch').value.toLowerCase().trim();
-            const rows = document.querySelectorAll('.user-row');
-            const noResults = document.getElementById('noSearchResults');
-            const emptyRow = document.getElementById('emptyRow');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const name = (row.dataset.name || '').toLowerCase();
-                const username = (row.dataset.username || '').toLowerCase();
-                const email = (row.dataset.email || '').toLowerCase();
-                const match = name.includes(query) || username.includes(query) || email.includes(query);
-                row.style.display = match ? '' : 'none';
-                if (match) visibleCount++;
-            });
-
-            // Show/hide no results message
-            if (emptyRow) emptyRow.style.display = 'none'; // hide the original empty row during search
-            if (rows.length > 0) {
-                noResults.style.display = visibleCount === 0 && query.length > 0 ? '' : 'none';
-            }
-
-            // Update count badge
-            const countBadge = document.getElementById('userCount');
-            if (countBadge && rows.length > 0) {
-                countBadge.textContent = visibleCount + ' người dùng';
-            }
-        }
-    </script>
 </div>
 </html>

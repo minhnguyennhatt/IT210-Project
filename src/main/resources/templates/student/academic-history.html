@@ -1,40 +1,75 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Lịch sử học thuật', ~{::content})}">
 <div th:fragment="content">
-    <div class="page-header"><h1><i class="fas fa-history"></i> Lịch sử Học thuật</h1></div>
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+            <i class="fas fa-history text-indigo-400"></i> Lịch sử Học thuật
+        </h1>
+    </div>
 
-    <div th:if="${history != null && !history.isEmpty()}">
-        <div class="card" th:each="h : ${history}">
-            <div class="card-header">
-                <h2><i class="fas fa-chalkboard-teacher"></i> Buổi tư vấn ngày <span th:text="${h.sessionDate}"></span></h2>
+    <div th:if="${history != null && !history.isEmpty()}" class="space-y-6">
+        <div class="glass-card overflow-hidden" th:each="h : ${history}">
+            <div class="bg-indigo-500/10 border-b border-indigo-500/20 p-5 flex items-center gap-3">
+                <i class="fas fa-chalkboard-teacher text-xl text-indigo-400"></i>
+                <h2 class="text-lg font-semibold text-slate-100">Buổi tư vấn ngày <span th:text="${h.sessionDate}" class="text-indigo-300"></span></h2>
             </div>
-            <div class="form-row" style="margin-bottom:1rem;">
-                <div class="form-group"><label>Giảng viên</label><p th:text="${h.lecturerName}" style="color:#818cf8;font-weight:600;"></p></div>
-                <div class="form-group"><label>Khoa</label><p th:text="${h.departmentName}"></p></div>
-                <div class="form-group"><label>Đánh giá năng lực</label>
-                    <span class="badge badge-completed" th:text="${h.performanceLevel}"></span>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Giảng viên</label>
+                        <p th:text="${h.lecturerName}" class="text-indigo-400 font-medium"></p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Khoa</label>
+                        <p th:text="${h.departmentName}" class="text-slate-200"></p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Đánh giá năng lực</label>
+                        <span class="badge-completed mt-1" th:text="${h.performanceLevel}"></span>
+                    </div>
                 </div>
-            </div>
-            <div th:if="${h.evaluationComment}" style="margin-bottom:1rem;">
-                <label style="color:#94a3b8;font-size:0.85rem;">Nhận xét</label>
-                <p th:text="${h.evaluationComment}" style="padding:0.5rem 0;"></p>
-            </div>
-            <div th:if="${h.recommendation}" style="margin-bottom:1rem;">
-                <label style="color:#94a3b8;font-size:0.85rem;">Khuyến nghị</label>
-                <p th:text="${h.recommendation}" style="padding:0.5rem 0;"></p>
-            </div>
-            <div th:if="${h.borrowedEquipments != null && !h.borrowedEquipments.isEmpty()}">
-                <label style="color:#94a3b8;font-size:0.85rem;">Thiết bị đã mượn</label>
-                <table style="margin-top:0.5rem;"><thead><tr><th>Mã TB</th><th>Tên thiết bị</th><th>Số lượng</th></tr></thead>
-                    <tbody><tr th:each="borrowedItem : ${h.borrowedEquipments}">
-                        <td th:text="${borrowedItem.equipmentCode}"></td><td th:text="${borrowedItem.equipmentName}"></td><td th:text="${borrowedItem.quantity}"></td>
-                    </tr></tbody>
-                </table>
+                
+                <div th:if="${h.evaluationComment}" class="mb-6 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Nhận xét</label>
+                    <p th:text="${h.evaluationComment}" class="text-slate-300"></p>
+                </div>
+                
+                <div th:if="${h.recommendation}" class="mb-6 bg-emerald-900/10 p-4 rounded-xl border border-emerald-500/20">
+                    <label class="block text-xs font-medium text-emerald-400/80 uppercase tracking-wider mb-2">Khuyến nghị</label>
+                    <p th:text="${h.recommendation}" class="text-emerald-100"></p>
+                </div>
+                
+                <div th:if="${h.borrowedEquipments != null && !h.borrowedEquipments.isEmpty()}" class="mt-6 border-t border-indigo-500/10 pt-6">
+                    <label class="block text-sm font-semibold text-indigo-300 mb-4 flex items-center gap-2">
+                        <i class="fas fa-tools"></i> Thiết bị đã mượn
+                    </label>
+                    <div class="table-container rounded-xl border border-indigo-500/20 overflow-hidden">
+                        <table class="table-custom bg-slate-900/30">
+                            <thead class="bg-indigo-500/10">
+                                <tr>
+                                    <th>Mã TB</th>
+                                    <th>Tên thiết bị</th>
+                                    <th>Số lượng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="eq : ${h.borrowedEquipments}">
+                                    <td th:text="${eq.equipmentCode}" class="font-mono text-xs text-indigo-300"></td>
+                                    <td th:text="${eq.equipmentName}" class="text-slate-200 font-medium"></td>
+                                    <td th:text="${eq.quantity}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card empty-state" th:if="${history == null || history.isEmpty()}">
-        <i class="fas fa-book-open"></i><p>Chưa có lịch sử học thuật</p>
+    
+    <div class="glass-card py-16 text-center text-slate-400" th:if="${history == null || history.isEmpty()}">
+        <i class="fas fa-book-open text-5xl opacity-30 mb-4"></i>
+        <p class="text-lg">Chưa có lịch sử học thuật</p>
     </div>
 </div>
 </html>

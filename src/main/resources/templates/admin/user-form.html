@@ -1,102 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout(~{::title}, ~{::content})}">
-<title th:text="${isEdit} ? 'Chỉnh sửa người dùng' : 'Thêm người dùng'">Thêm người dùng</title>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Người dùng', ~{::content})}">
 <div th:fragment="content">
-    <div class="page-header">
-        <div>
-            <h1>
-                <i th:classappend="${isEdit} ? 'fas fa-edit' : 'fas fa-user-plus'"></i>
-                <span th:text="${isEdit} ? 'Chỉnh sửa người dùng' : 'Thêm người dùng'"></span>
-            </h1>
-        </div>
-        <a th:href="@{/admin/users}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+            <i class="fas fa-user-edit text-indigo-400"></i> <span th:text="${isEdit} ? 'Sửa thông tin người dùng' : 'Thêm người dùng mới'"></span>
+        </h1>
     </div>
 
-    <div th:if="${errorMessage}" class="alert alert-error">
-        <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
-    </div>
-
-    <div class="card" style="max-width: 700px;">
-        <form th:action="${isEdit} ? '/admin/users/' + ${user.id} : '/admin/users'" method="post" style="padding: 24px;">
-            <!-- Role selection (only for create) -->
-            <div class="form-group" th:if="${!isEdit}">
-                <label for="role">Vai trò *</label>
-                <select id="role" name="role" onchange="toggleLecturerFields()">
-                    <option value="STUDENT" th:selected="${selectedRole == 'STUDENT' || selectedRole == null}">Sinh viên</option>
-                    <option value="LECTURER" th:selected="${selectedRole == 'LECTURER'}">Giảng viên</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="username">Tên đăng nhập *</label>
-                    <input type="text" id="username" name="username" th:value="${user.username}" placeholder="vd: nguyenvana"
-                           th:readonly="${isEdit}" required>
+    <div class="glass-card max-w-4xl p-8">
+        <form th:action="${isEdit} ? @{/admin/users/{id}(id=${user.id})} : @{/admin/users}"
+              th:object="${user}" method="post" class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="username" class="form-label">Tên đăng nhập *</label>
+                    <input type="text" id="username" th:field="*{username}" placeholder="vd: nguyenvana" required class="form-input font-mono" th:readonly="${isEdit}" th:classappend="${isEdit ? 'opacity-60 cursor-not-allowed' : ''}">
                 </div>
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" th:value="${user.email}" placeholder="vd: email@uni.edu.vn" required>
+                <div>
+                    <label for="email" class="form-label">Email *</label>
+                    <input type="email" id="email" th:field="*{email}" placeholder="vd: email@uni.edu.vn" required class="form-input">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="fullName">Họ và tên *</label>
-                <input type="text" id="fullName" name="fullName" th:value="${user.fullName}" placeholder="Nguyễn Văn A" required>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="password" th:text="${isEdit} ? 'Mật khẩu mới (để trống nếu không đổi)' : 'Mật khẩu *'">Mật khẩu</label>
-                    <input type="password" id="password" name="password" th:attr="placeholder=${isEdit} ? 'Để trống nếu không đổi' : 'Tối thiểu 6 ký tự'"
-                           th:required="${!isEdit}">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="fullName" class="form-label">Họ và tên *</label>
+                    <input type="text" id="fullName" th:field="*{fullName}" placeholder="Nguyễn Văn A" required class="form-input">
                 </div>
-                <div class="form-group">
-                    <label for="phone">Số điện thoại</label>
-                    <input type="text" id="phone" name="phone" th:value="${user.phone}" placeholder="vd: 0901234567">
+                <div>
+                    <label for="phone" class="form-label">Số điện thoại</label>
+                    <input type="text" id="phone" th:field="*{phone}" placeholder="0987654321" class="form-input">
                 </div>
             </div>
 
-            <!-- Status (only for edit) -->
-            <div class="form-group" th:if="${isEdit}">
-                <label for="isActive">Trạng thái</label>
-                <select id="isActive" name="isActive">
-                    <option value="true" th:selected="${user.isActive}">Hoạt động</option>
-                    <option value="false" th:selected="${!user.isActive}">Vô hiệu hóa</option>
-                </select>
-            </div>
-
-            <!-- Lecturer-specific fields -->
-            <div id="lecturerFields" th:style="${selectedRole != 'LECTURER' && (lecturerDetail == null)} ? 'display:none' : ''">
-                <hr style="margin: 16px 0;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #4a6cf7;"><i class="fas fa-chalkboard-teacher"></i> Thông tin Giảng viên</h3>
-                <div class="form-group">
-                    <label for="departmentId">Khoa/Ngành *</label>
-                    <select id="departmentId" name="departmentId">
-                        <option value="">-- Chọn Khoa --</option>
-                        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"
-                                th:selected="${lecturerDetail != null && lecturerDetail.department.id == dept.id}"></option>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="role" class="form-label">Vai trò *</label>
+                    <select id="role" name="role" required class="form-input [&>option]:bg-slate-800" onchange="toggleLecturerFields()" th:disabled="${isEdit}">
+                        <option value="STUDENT" th:selected="${selectedRole == 'STUDENT'}">Sinh viên</option>
+                        <option value="LECTURER" th:selected="${selectedRole == 'LECTURER'}">Giảng viên</option>
+                    </select>
+                    <!-- Add hidden input for role if in edit mode because disabled select won't be submitted -->
+                    <input type="hidden" name="role" th:value="${selectedRole}" th:if="${isEdit}">
+                </div>
+                <div>
+                    <label for="isActive" class="form-label">Trạng thái</label>
+                    <select id="isActive" th:field="*{isActive}" class="form-input [&>option]:bg-slate-800">
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Đã khóa</option>
                     </select>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="academicRank">Học hàm/Học vị</label>
-                        <input type="text" id="academicRank" name="academicRank"
-                               th:value="${lecturerDetail != null ? lecturerDetail.academicRank : ''}" placeholder="vd: Tiến sĩ">
+            </div>
+
+            <div>
+                <label for="newPassword" class="form-label">Mật khẩu <span th:if="${!isEdit}">*</span></label>
+                <!-- Dùng name="passwordHash" cho CREATE (map vào object), nhưng cho EDIT, ta gửi qua name="newPassword" (parameter riêng trong controller) -->
+                <input type="password" th:if="${!isEdit}" id="password" th:field="*{passwordHash}" placeholder="Tối thiểu 6 ký tự" required class="form-input">
+                <input type="password" th:if="${isEdit}" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới nếu muốn thay đổi, bỏ trống để giữ nguyên" class="form-input">
+            </div>
+
+            <!-- Lecturer specific fields -->
+            <div id="lecturerFields" class="hidden space-y-6 bg-indigo-500/5 border border-indigo-500/20 p-6 rounded-xl mt-6">
+                <h3 class="text-lg font-semibold text-indigo-300 mb-2 border-b border-indigo-500/20 pb-2"><i class="fas fa-chalkboard-teacher"></i> Thông tin Giảng viên</h3>
+                <div>
+                    <label for="departmentId" class="form-label text-indigo-300">Khoa / Ngành *</label>
+                    <select id="departmentId" name="departmentId" class="form-input [&>option]:bg-slate-800 border-indigo-500/40">
+                        <option value="">-- Chọn Khoa --</option>
+                        <option th:each="dept : ${departments}" 
+                                th:value="${dept.id}" 
+                                th:text="${dept.name}"
+                                th:selected="${lecturerDetail != null && lecturerDetail.department != null && lecturerDetail.department.id == dept.id}"></option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="academicRank" class="form-label text-indigo-300">Học hàm / Học vị</label>
+                        <input type="text" id="academicRank" name="academicRank" th:value="${lecturerDetail != null ? lecturerDetail.academicRank : ''}" placeholder="vd: Tiến sĩ" class="form-input border-indigo-500/40">
                     </div>
-                    <div class="form-group">
-                        <label for="specialization">Chuyên ngành</label>
-                        <input type="text" id="specialization" name="specialization"
-                               th:value="${lecturerDetail != null ? lecturerDetail.specialization : ''}" placeholder="vd: AI, Machine Learning">
+                    <div>
+                        <label for="specialization" class="form-label text-indigo-300">Chuyên ngành</label>
+                        <input type="text" id="specialization" name="specialization" th:value="${lecturerDetail != null ? lecturerDetail.specialization : ''}" placeholder="vd: Kỹ thuật phần mềm" class="form-input border-indigo-500/40">
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button type="submit" class="btn btn-primary">
-                    <i th:classappend="${isEdit} ? 'fas fa-save' : 'fas fa-plus'"></i>
-                    <span th:text="${isEdit} ? 'Cập nhật' : 'Tạo tài khoản'"></span>
+            <div class="pt-6 border-t border-indigo-500/10 flex gap-4">
+                <button type="submit" class="btn-success">
+                    <i class="fas fa-save"></i> <span th:text="${isEdit} ? 'Cập nhật' : 'Thêm mới'"></span>
                 </button>
-                <a th:href="@{/admin/users}" class="btn btn-secondary" style="margin-left: 8px;">Hủy</a>
+                <a th:href="@{/admin/users}" class="btn-warning bg-slate-700 hover:bg-slate-600 hover:shadow-none text-slate-200">
+                    Hủy & Quay lại
+                </a>
             </div>
         </form>
     </div>
@@ -104,15 +98,25 @@
 
 <script>
 function toggleLecturerFields() {
-    var role = document.getElementById('role');
+    var roleElement = document.getElementById('role');
+    // If element is disabled, we might need to check the hidden input
+    if(!roleElement && document.querySelector('input[name="role"]')) {
+        roleElement = document.querySelector('input[name="role"]');
+    }
+    
+    var role = roleElement ? roleElement.value : 'STUDENT';
     var fields = document.getElementById('lecturerFields');
-    if (role && fields) {
-        fields.style.display = role.value === 'LECTURER' ? 'block' : 'none';
+    var deptInput = document.getElementById('departmentId');
+    
+    if (role === 'LECTURER') {
+        fields.classList.remove('hidden');
+        deptInput.setAttribute('required', 'required');
+    } else {
+        fields.classList.add('hidden');
+        deptInput.removeAttribute('required');
     }
 }
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    toggleLecturerFields();
-});
+
+document.addEventListener('DOMContentLoaded', toggleLecturerFields);
 </script>
 </html>
