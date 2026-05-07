@@ -17,12 +17,12 @@
         </div>
         <div class="stat-card">
             <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
-            <div class="stat-value" th:text="${sessions != null ? sessions.stream().filter(s -> s.status == 'PENDING').count() : 0}">0</div>
+            <div class="stat-value" th:text="${pendingCount}">0</div>
             <div class="stat-label">Đang chờ</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-value" th:text="${sessions != null ? sessions.stream().filter(s -> s.status == 'COMPLETED').count() : 0}">0</div>
+            <div class="stat-value" th:text="${completedCount}">0</div>
             <div class="stat-label">Đã hoàn thành</div>
         </div>
     </div>

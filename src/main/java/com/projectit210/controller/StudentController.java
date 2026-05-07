@@ -38,7 +38,10 @@ public class StudentController {
     public String dashboard(HttpServletRequest request, Model model) {
         User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
         model.addAttribute("user", user);
-        model.addAttribute("sessions", sessionService.getSessionsByStudent(user.getId()));
+        List<com.projectit210.dto.response.SessionResponse> sessions = sessionService.getSessionsByStudent(user.getId());
+        model.addAttribute("sessions", sessions);
+        model.addAttribute("pendingCount", sessions.stream().filter(s -> "PENDING".equals(s.getStatus())).count());
+        model.addAttribute("completedCount", sessions.stream().filter(s -> "COMPLETED".equals(s.getStatus())).count());
         return "student/dashboard";
     }
 
@@ -52,8 +55,16 @@ public class StudentController {
     /** API AJAX: Lấy danh sách giảng viên theo khoa */
     @GetMapping("/api/lecturers")
     @ResponseBody
-    public List<Lecturer> getLecturersByDepartment(@RequestParam Long departmentId) {
-        return lecturerRepository.findByDepartmentIdWithDetails(departmentId);
+    public List<java.util.Map<String, Object>> getLecturersByDepartment(@RequestParam Long departmentId) {
+        return lecturerRepository.findByDepartmentIdWithDetails(departmentId).stream()
+                .map(l -> {
+                    java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+                    map.put("id", l.getId());
+                    map.put("fullName", l.getUser().getFullName());
+                    map.put("academicRank", l.getAcademicRank());
+                    return map;
+                })
+                .toList();
     }
 
     /** API AJAX: Lấy danh sách slot đã đặt trong ngày */

@@ -100,6 +100,55 @@ table tr:hover { background: rgba(99, 102, 241, 0.05); }
 .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
 .empty-state p { font-size: 1.1rem; }
 
+/* ========== BADGE VARIANTS ========== */
+.badge-info { background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+.badge-success { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+.badge-danger { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+.badge-warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.badge-purple { background: rgba(129, 140, 248, 0.15); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.3); }
+.badge-secondary { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+/* ========== FILTER TABS ========== */
+.filter-tabs { display: flex; gap: 4px; background: rgba(15, 15, 35, 0.4); border-radius: 12px; padding: 4px; border: 1px solid rgba(99, 102, 241, 0.1); }
+.filter-tab { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.2rem; border-radius: 10px; font-weight: 500; font-size: 0.9rem; color: #94a3b8; transition: all 0.3s; cursor: pointer; border: none; background: transparent; }
+.filter-tab:hover { color: #e2e8f0; background: rgba(99, 102, 241, 0.1); }
+.filter-tab.active { background: linear-gradient(135deg, #6366f1, #818cf8); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+.filter-tab .tab-count { background: rgba(255,255,255,0.2); padding: 0.1rem 0.5rem; border-radius: 10px; font-size: 0.75rem; font-weight: 700; }
+.filter-tab:not(.active) .tab-count { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+/* ========== SEARCH BAR ========== */
+.search-bar { position: relative; flex: 1; max-width: 400px; }
+.search-bar input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.8rem; background: rgba(15, 15, 35, 0.6); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; color: #e2e8f0; font-size: 0.9rem; transition: all 0.3s; }
+.search-bar input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+.search-bar input::placeholder { color: #64748b; }
+.search-bar .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.9rem; }
+
+/* ========== USER AVATAR ========== */
+.user-avatar { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: white; flex-shrink: 0; }
+.user-avatar.student { background: linear-gradient(135deg, #6366f1, #818cf8); }
+.user-avatar.lecturer { background: linear-gradient(135deg, #10b981, #34d399); }
+.user-cell { display: flex; align-items: center; gap: 0.75rem; }
+.user-cell-info { display: flex; flex-direction: column; }
+.user-cell-info .name { font-weight: 600; color: #e2e8f0; }
+.user-cell-info .username { font-size: 0.8rem; color: #64748b; }
+
+/* ========== ACTION BUTTONS ========== */
+.action-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+.action-btn:hover { transform: translateY(-1px); }
+.action-btn.edit { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+.action-btn.edit:hover { background: rgba(99, 102, 241, 0.3); }
+.action-btn.toggle-active { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.action-btn.toggle-active:hover { background: rgba(251, 191, 36, 0.3); }
+.action-btn.toggle-inactive { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+.action-btn.toggle-inactive:hover { background: rgba(52, 211, 153, 0.3); }
+.action-btn.delete { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.action-btn.delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+/* ========== TOOLBAR ========== */
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.toolbar-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.toolbar-right { display: flex; align-items: center; gap: 0.5rem; }
+
 /* ========== LECTURER SPECIFIC ========== */
 .lecturer-field { display: none; }
 .lecturer-field.show { display: block; }
