@@ -1,66 +1,108 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Tổng quan - Admin', ~{::content})}">
-<div th:fragment="content">
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/main-layout :: layout('Tổng quan - Admin', ~{::content})}"
+>
+  <div th:fragment="content">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-100">Bảng điều khiển Quản trị</h1>
-        <p class="text-slate-400 text-sm mt-1">Chào mừng, <span th:text="${user.fullName}" class="text-indigo-400">Admin</span></p>
+      <h1 class="text-2xl font-bold text-slate-100">
+        Bảng điều khiển Quản trị
+      </h1>
+      <p class="text-slate-400 text-sm mt-1">
+        Chào mừng,
+        <span th:text="${user.fullName}" class="text-indigo-400">Admin</span>
+      </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="glass-card flex items-center p-6 gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl shrink-0 border border-indigo-500/20">
-                <i class="fas fa-tools"></i>
-            </div>
-            <div>
-                <div class="text-3xl font-bold text-slate-100" th:text="${totalEquipments}">0</div>
-                <div class="text-slate-400 text-sm font-medium">Tổng thiết bị</div>
-            </div>
+      <div class="glass-card flex items-center p-6 gap-5">
+        <div
+          class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl shrink-0 border border-indigo-500/20"
+        >
+          <i class="fas fa-tools"></i>
         </div>
-        <div class="glass-card flex items-center p-6 gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl shrink-0 border border-amber-500/20">
-                <i class="fas fa-box"></i>
-            </div>
-            <div>
-                <div class="text-3xl font-bold text-slate-100" th:text="${pendingBorrowings != null ? pendingBorrowings.size() : 0}">0</div>
-                <div class="text-slate-400 text-sm font-medium">Phiếu chờ duyệt</div>
-            </div>
+        <div>
+          <div
+            class="text-3xl font-bold text-slate-100"
+            th:text="${totalEquipments}"
+          >
+            0
+          </div>
+          <div class="text-slate-400 text-sm font-medium">Tổng thiết bị</div>
         </div>
+      </div>
+      <div class="glass-card flex items-center p-6 gap-5">
+        <div
+          class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl shrink-0 border border-amber-500/20"
+        >
+          <i class="fas fa-box"></i>
+        </div>
+        <div>
+          <div
+            class="text-3xl font-bold text-slate-100"
+            th:text="${pendingBorrowings != null ? pendingBorrowings.size() : 0}"
+          >
+            0
+          </div>
+          <div class="text-slate-400 text-sm font-medium">Phiếu chờ duyệt</div>
+        </div>
+      </div>
     </div>
 
-    <div class="glass-card overflow-hidden" th:if="${pendingBorrowings != null && !pendingBorrowings.isEmpty()}">
-        <div class="flex items-center justify-between p-6 border-b border-indigo-500/10">
-            <h2 class="text-lg font-semibold text-amber-400 flex items-center gap-2">
-                <i class="fas fa-exclamation-triangle"></i> Phiếu mượn cần xử lý
-            </h2>
-            <a th:href="@{/admin/borrowings}" class="text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 px-4 py-2 rounded-lg transition-colors">Xem tất cả</a>
-        </div>
-        
-        <div class="table-container">
-            <table class="table-custom">
-                <thead>
-                    <tr>
-                        <th class="w-16">ID</th>
-                        <th>Sinh viên</th>
-                        <th>Ngày mượn</th>
-                        <th>Trạng thái</th>
-                        <th class="text-right">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="b, i : ${pendingBorrowings}" th:if="${i.index < 5}">
-                        <td th:text="${'#' + b.id}" class="text-indigo-300 font-mono text-xs"></td>
-                        <td th:text="${b.studentName}" class="font-medium text-slate-200"></td>
-                        <td th:text="${b.borrowDate}"></td>
-                        <td><span class="badge-pending">Chờ cấp phát</span></td>
-                        <td class="text-right">
-                            <a th:href="@{/admin/borrowings}" class="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-                                Xử lý <i class="fas fa-arrow-right ml-1"></i>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div
+      class="glass-card overflow-hidden"
+      th:if="${pendingBorrowings != null && !pendingBorrowings.isEmpty()}"
+    >
+      <div
+        class="flex items-center justify-between p-6 border-b border-indigo-500/10"
+      >
+        <h2
+          class="text-lg font-semibold text-amber-400 flex items-center gap-2"
+        >
+          <i class="fas fa-exclamation-triangle"></i> Phiếu mượn cần xử lý
+        </h2>
+        <a
+          th:href="@{/admin/borrowings}"
+          class="text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 px-4 py-2 rounded-lg transition-colors"
+          >Xem tất cả</a
+        >
+      </div>
+
+      <div class="table-container">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th class="w-16">ID</th>
+              <th>Sinh viên</th>
+              <th>Ngày mượn</th>
+              <th>Trạng thái</th>
+              <th class="text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="b, i : ${pendingBorrowings}" th:if="${i.index < 5}">
+              <td
+                th:text="${'#' + b.id}"
+                class="text-indigo-300 font-mono text-xs"
+              ></td>
+              <td
+                th:text="${b.studentName}"
+                class="font-medium text-slate-200"
+              ></td>
+              <td th:text="${b.borrowDate}"></td>
+              <td><span class="badge-pending">Chờ cấp phát</span></td>
+              <td class="text-right">
+                <a
+                  th:href="@{/admin/borrowings}"
+                  class="inline-flex items-center gap-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                >
+                  Xử lý <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-</div>
+  </div>
 </html>

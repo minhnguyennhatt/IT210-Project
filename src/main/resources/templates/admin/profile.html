@@ -1,63 +1,119 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main-layout :: layout('Hồ sơ cá nhân', ~{::content})}">
-<div th:fragment="content">
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layouts/main-layout :: layout('Hồ sơ cá nhân', ~{::content})}"
+>
+  <div th:fragment="content">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
-            <i class="fas fa-user-shield text-indigo-400"></i> Hồ sơ cá nhân
-        </h1>
+      <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+        <i class="fas fa-user-shield text-indigo-400"></i> Hồ sơ cá nhân
+      </h1>
     </div>
 
     <div class="glass-card max-w-4xl p-8">
-        <form th:action="@{/profile}" method="post" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="form-label">Tên đăng nhập</label>
-                    <input type="text" th:value="${user.username}" disabled class="form-input opacity-60 cursor-not-allowed">
-                </div>
-                <div>
-                    <label class="form-label">Email</label>
-                    <input type="text" th:value="${user.email}" disabled class="form-input opacity-60 cursor-not-allowed">
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="fullName" class="form-label">Họ và tên</label>
-                    <input type="text" id="fullName" name="fullName" th:value="${user.fullName}" class="form-input">
-                </div>
-                <div>
-                    <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" id="phone" name="phone" th:value="${user.phone}" class="form-input">
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="gender" class="form-label">Giới tính</label>
-                    <select id="gender" name="gender" class="form-input [&>option]:bg-slate-800">
-                        <option value="">-- Chọn --</option>
-                        <option value="MALE" th:selected="${user.gender != null && user.gender.name() == 'MALE'}">Nam</option>
-                        <option value="FEMALE" th:selected="${user.gender != null && user.gender.name() == 'FEMALE'}">Nữ</option>
-                        <option value="OTHER" th:selected="${user.gender != null && user.gender.name() == 'OTHER'}">Khác</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="dob" class="form-label">Ngày sinh</label>
-                    <input type="date" id="dob" name="dob" th:value="${user.dob}" class="form-input [&::-webkit-calendar-picker-indicator]:filter-invert">
-                </div>
-            </div>
-            
-            <div>
-                <label for="address" class="form-label">Địa chỉ</label>
-                <textarea id="address" name="address" rows="3" th:text="${user.address}" class="form-input resize-none"></textarea>
-            </div>
-            
-            <div class="pt-4 border-t border-indigo-500/10">
-                <button type="submit" class="btn-success">
-                    <i class="fas fa-save"></i> Cập nhật thông tin
-                </button>
-            </div>
-        </form>
+      <form th:action="@{/profile}" method="post" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="form-label">Tên đăng nhập</label>
+            <input
+              type="text"
+              th:value="${user.username}"
+              disabled
+              class="form-input opacity-60 cursor-not-allowed"
+            />
+          </div>
+          <div>
+            <label class="form-label">Email</label>
+            <input
+              type="text"
+              th:value="${user.email}"
+              disabled
+              class="form-input opacity-60 cursor-not-allowed"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="fullName" class="form-label">Họ và tên</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              th:value="${user.fullName}"
+              class="form-input"
+            />
+          </div>
+          <div>
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              th:value="${user.phone}"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="gender" class="form-label">Giới tính</label>
+            <select
+              id="gender"
+              name="gender"
+              class="form-input [&>option]:bg-slate-800"
+            >
+              <option value="">-- Chọn --</option>
+              <option
+                value="MALE"
+                th:selected="${user.gender != null && user.gender.name() == 'MALE'}"
+              >
+                Nam
+              </option>
+              <option
+                value="FEMALE"
+                th:selected="${user.gender != null && user.gender.name() == 'FEMALE'}"
+              >
+                Nữ
+              </option>
+              <option
+                value="OTHER"
+                th:selected="${user.gender != null && user.gender.name() == 'OTHER'}"
+              >
+                Khác
+              </option>
+            </select>
+          </div>
+          <div>
+            <label for="dob" class="form-label">Ngày sinh</label>
+            <input
+              type="date"
+              id="dob"
+              name="dob"
+              th:value="${user.dob}"
+              class="form-input [&::-webkit-calendar-picker-indicator]:filter-invert"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="address" class="form-label">Địa chỉ</label>
+          <textarea
+            id="address"
+            name="address"
+            rows="3"
+            th:text="${user.address}"
+            class="form-input resize-none"
+          ></textarea>
+        </div>
+
+        <div class="pt-4 border-t border-indigo-500/10">
+          <button type="submit" class="btn-success">
+            <i class="fas fa-save"></i> Cập nhật thông tin
+          </button>
+        </div>
+      </form>
     </div>
-</div>
+  </div>
 </html>
