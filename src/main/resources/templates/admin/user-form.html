@@ -212,29 +212,26 @@
         </div>
       </form>
     </div>
+    <script>
+      function toggleLecturerFields() {
+        var roleElement = document.getElementById("role");
+        if (!roleElement && document.querySelector('input[name="role"]')) {
+          roleElement = document.querySelector('input[name="role"]');
+        }
+
+        var role = roleElement ? roleElement.value : "STUDENT";
+        var fields = document.getElementById("lecturerFields");
+        var deptInput = document.getElementById("departmentId");
+
+        if (role === "LECTURER") {
+          fields.classList.remove("hidden");
+          deptInput.setAttribute("required", "required");
+        } else {
+          fields.classList.add("hidden");
+          deptInput.removeAttribute("required");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", toggleLecturerFields);
+    </script>
   </div>
-
-  <script>
-    function toggleLecturerFields() {
-      var roleElement = document.getElementById("role");
-      // If element is disabled, we might need to check the hidden input
-      if (!roleElement && document.querySelector('input[name="role"]')) {
-        roleElement = document.querySelector('input[name="role"]');
-      }
-
-      var role = roleElement ? roleElement.value : "STUDENT";
-      var fields = document.getElementById("lecturerFields");
-      var deptInput = document.getElementById("departmentId");
-
-      if (role === "LECTURER") {
-        fields.classList.remove("hidden");
-        deptInput.setAttribute("required", "required");
-      } else {
-        fields.classList.add("hidden");
-        deptInput.removeAttribute("required");
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", toggleLecturerFields);
-  </script>
-</html>

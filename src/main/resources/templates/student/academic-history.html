@@ -96,16 +96,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="eq : ${h.borrowedEquipments}">
+                  <tr th:each="item : ${h.borrowedEquipments}">
                     <td
-                      th:text="${eq.equipmentCode}"
+                      th:text="${item.equipmentCode}"
                       class="font-mono text-xs text-indigo-300"
                     ></td>
                     <td
-                      th:text="${eq.equipmentName}"
+                      th:text="${item.equipmentName}"
                       class="text-slate-200 font-medium"
                     ></td>
-                    <td th:text="${eq.quantity}"></td>
+                    <td th:text="${item.quantity}"></td>
                   </tr>
                 </tbody>
               </table>

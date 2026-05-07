@@ -49,6 +49,18 @@ public class StudentController {
     public String bookingForm(Model model) {
         model.addAttribute("createSessionRequest", new CreateSessionRequest());
         model.addAttribute("departments", departmentRepository.findAll());
+
+        List<java.util.Map<String, Object>> lecturerList = lecturerRepository.findAllWithDetails().stream()
+                .map(l -> {
+                    java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+                    map.put("id", l.getId());
+                    map.put("fullName", l.getUser().getFullName());
+                    map.put("academicRank", l.getAcademicRank() != null ? l.getAcademicRank() : "");
+                    map.put("departmentId", l.getDepartment().getId());
+                    return map;
+                })
+                .toList();
+        model.addAttribute("lecturerList", lecturerList);
         return "student/booking-form";
     }
 
@@ -121,6 +133,7 @@ public class StudentController {
     @GetMapping("/academic-history")
     public String academicHistory(HttpServletRequest request, Model model) {
         User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
+        model.addAttribute("user", user);
         model.addAttribute("history", evaluationService.getAcademicHistory(user.getId()));
         return "student/academic-history";
     }
