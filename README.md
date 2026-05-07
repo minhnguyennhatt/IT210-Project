@@ -21,7 +21,7 @@
 |---|---|
 | **Backend** | Java 21, Spring Boot 4.0.6 (Web, Data JPA, Validation) |
 | **Database** | MySQL 8.x (Hibernate DDL auto-update) |
-| **Frontend** | Thymeleaf, HTML5, CSS3 |
+| **Frontend** | Thymeleaf, HTML5, Tailwind CSS (Glassmorphism UI) |
 | **Bảo mật** | JWT (jjwt 0.12.6) qua HttpOnly Cookie + BCrypt (spring-security-crypto) |
 | **Build Tool** | Gradle |
 | **Utility** | Lombok (giảm boilerplate code) |
@@ -257,7 +257,7 @@ users (1) ──── (N) mentoring_sessions (N) ──── (1) lecturers
 
 | File | Chức năng |
 |---|---|
-| [`style.css`](src/main/resources/static/css/style.css) | Toàn bộ CSS quy định giao diện hệ thống: layout sidebar + content, form styling, table, button, card, responsive, màu sắc theo vai trò (student/lecturer/admin). |
+| [`style.css`](src/main/resources/static/css/style.css) | File chứa các tùy chỉnh CSS mở rộng. Giao diện chính của hệ thống đã được chuyển sang sử dụng **Tailwind CSS** (qua CDN) với phong cách **Glassmorphism** hiện đại. |
 
 #### 📁 `templates/` — Giao diện Thymeleaf (HTML)
 
@@ -303,7 +303,7 @@ users (1) ──── (N) mentoring_sessions (N) ──── (1) lecturers
 
 | File | Chức năng |
 |---|---|
-| [`header.html`](src/main/resources/templates/fragments/header.html) | Fragment header: hiển thị tên ứng dụng, thông tin user đăng nhập, nút đăng xuất. |
+| [`header.html`](src/main/resources/templates/fragments/header.html) | Fragment header: hiển thị tên ứng dụng, thông tin user đăng nhập, nút đăng xuất, và cấu hình **Tailwind CSS CDN**. |
 | [`sidebar.html`](src/main/resources/templates/fragments/sidebar.html) | Fragment sidebar: menu điều hướng thay đổi theo role (Student: Dashboard, Đặt lịch, Lịch sử; Lecturer: Dashboard, Chờ xử lý; Admin: Dashboard, Thiết bị, Mượn thiết bị). Highlight menu active dựa trên `currentUri`. |
 | [`footer.html`](src/main/resources/templates/fragments/footer.html) | Fragment footer: thông tin bản quyền. |
 
