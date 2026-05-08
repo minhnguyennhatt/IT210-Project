@@ -92,10 +92,7 @@ CREATE TABLE mentoring_sessions (
     CONSTRAINT fk_session_student
         FOREIGN KEY (student_id) REFERENCES users(id),
     CONSTRAINT fk_session_lecturer
-        FOREIGN KEY (lecturer_id) REFERENCES lecturers(id),
-    -- Prevent duplicate bookings: one lecturer cannot have multiple sessions at the same time
-    CONSTRAINT uq_lecturer_slot
-        UNIQUE (lecturer_id, session_date, start_time)
+        FOREIGN KEY (lecturer_id) REFERENCES lecturers(id)
 );
 
 

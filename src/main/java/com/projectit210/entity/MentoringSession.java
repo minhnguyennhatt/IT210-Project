@@ -13,11 +13,7 @@ import java.time.LocalTime;
  * Bảng trung tâm giải quyết bài toán chống xung đột thời gian (CORE-05, CORE-09)
  */
 @Entity
-@Table(name = "mentoring_sessions",
-       uniqueConstraints = @UniqueConstraint(
-           name = "uq_lecturer_slot",
-           columnNames = {"lecturer_id", "session_date", "start_time"}
-       ))
+@Table(name = "mentoring_sessions")
 @Getter
 @Setter
 @NoArgsConstructor

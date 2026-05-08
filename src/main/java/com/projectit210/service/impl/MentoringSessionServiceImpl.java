@@ -54,11 +54,12 @@ public class MentoringSessionServiceImpl implements MentoringSessionService {
         Lecturer lecturer = lecturerRepository.findById(request.getLecturerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Giảng viên không tồn tại"));
 
-        // Kiểm tra xung đột slot (CORE-05: chống duplicate)
+        // Kiểm tra xung đột slot (CORE-05: chống duplicate & overlap)
         boolean conflict = sessionRepository.existsConflictingSlot(
                 request.getLecturerId(),
                 request.getSessionDate(),
-                request.getStartTime()
+                request.getStartTime(),
+                request.getEndTime()
         );
         if (conflict) {
             throw new ConflictException("Giảng viên đã có lịch trong khung giờ này. Vui lòng chọn khung giờ khác.");

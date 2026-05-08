@@ -15,16 +15,19 @@ import java.util.List;
 public interface MentoringSessionRepository extends JpaRepository<MentoringSession, Long> {
 
     /**
-     * Kiểm tra xung đột slot: giảng viên đã có lịch trong cùng khung giờ chưa (chỉ tính các trạng thái active)
+     * Kiểm tra xung đột slot: giảng viên đã có lịch chồng chéo trong cùng ngày chưa (chỉ tính các trạng thái active)
+     * Hai khoảng thời gian [start1, end1) và [start2, end2) overlap khi: start1 < end2 AND end1 > start2
      */
     @Query("SELECT COUNT(s) > 0 FROM MentoringSession s " +
            "WHERE s.lecturer.id = :lecturerId " +
            "AND s.sessionDate = :sessionDate " +
-           "AND s.startTime = :startTime " +
+           "AND s.startTime < :endTime " +
+           "AND s.endTime > :startTime " +
            "AND s.status <> 'CANCELLED'")
     boolean existsConflictingSlot(@Param("lecturerId") Long lecturerId,
                                   @Param("sessionDate") LocalDate sessionDate,
-                                  @Param("startTime") LocalTime startTime);
+                                  @Param("startTime") LocalTime startTime,
+                                  @Param("endTime") LocalTime endTime);
 
     List<MentoringSession> findByStudentIdOrderBySessionDateDescStartTimeDesc(String studentId);
 
