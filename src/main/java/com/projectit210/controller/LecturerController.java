@@ -5,6 +5,7 @@ import com.projectit210.dto.request.EvaluationRequest;
 import com.projectit210.entity.Lecturer;
 import com.projectit210.entity.MentoringSession;
 import com.projectit210.entity.User;
+import com.projectit210.enums.SessionStatus;
 import com.projectit210.exception.BadRequestException;
 import com.projectit210.exception.ResourceNotFoundException;
 import com.projectit210.repository.LecturerRepository;
@@ -38,6 +39,7 @@ public class LecturerController {
         model.addAttribute("user", user);
         model.addAttribute("lecturer", lecturer);
         model.addAttribute("pendingSessions", sessionService.getPendingSessionsByLecturer(lecturer.getId()));
+        model.addAttribute("confirmedSessions", sessionService.getConfirmedSessionsByLecturer(lecturer.getId()));
         return "lecturer/dashboard";
     }
 
@@ -50,10 +52,23 @@ public class LecturerController {
         return "lecturer/pending-sessions";
     }
 
+    @GetMapping("/confirmed-sessions")
+    public String confirmedSessions(HttpServletRequest request, Model model) {
+        User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
+        Lecturer lecturer = lecturerRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Giảng viên không tồn tại"));
+        model.addAttribute("sessions", sessionService.getConfirmedSessionsByLecturer(lecturer.getId()));
+        return "lecturer/confirmed-sessions";
+    }
+
     @GetMapping("/evaluate/{sessionId}")
-    public String evaluationForm(@PathVariable Long sessionId, Model model) {
+    public String evaluationForm(@PathVariable Long sessionId, Model model, RedirectAttributes redirectAttributes) {
         MentoringSession mentoringSession = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Buổi tư vấn không tồn tại"));
+        if (mentoringSession.getStatus() != SessionStatus.CONFIRMED) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Buổi tư vấn phải được xác nhận trước khi đánh giá");
+            return "redirect:/lecturer/pending-sessions";
+        }
         model.addAttribute("mentoringSession", mentoringSession);
         model.addAttribute("evaluationRequest", new EvaluationRequest());
         model.addAttribute("equipments", equipmentService.findAllActive());
@@ -71,6 +86,22 @@ public class LecturerController {
                     .orElseThrow(() -> new ResourceNotFoundException("Giảng viên không tồn tại"));
             sessionService.cancelSessionByLecturer(sessionId, lecturer.getId(), reason);
             redirectAttributes.addFlashAttribute("successMessage", "Đã hủy buổi tư vấn thành công!");
+        } catch (BadRequestException | ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/lecturer/pending-sessions";
+    }
+
+    @PostMapping("/confirm-session/{sessionId}")
+    public String confirmSession(@PathVariable Long sessionId,
+                                  HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
+            Lecturer lecturer = lecturerRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Giảng viên không tồn tại"));
+            sessionService.confirmSession(sessionId, lecturer.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận buổi tư vấn thành công!");
         } catch (BadRequestException | ResourceNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

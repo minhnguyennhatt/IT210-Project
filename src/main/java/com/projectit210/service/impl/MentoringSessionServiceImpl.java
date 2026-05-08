@@ -130,8 +130,8 @@ public class MentoringSessionServiceImpl implements MentoringSessionService {
             throw new BadRequestException("Bạn không có quyền hủy buổi tư vấn này");
         }
 
-        if (session.getStatus() != SessionStatus.PENDING) {
-            throw new BadRequestException("Chỉ có thể hủy buổi tư vấn đang ở trạng thái 'Chờ xác nhận'");
+        if (session.getStatus() != SessionStatus.PENDING && session.getStatus() != SessionStatus.CONFIRMED) {
+            throw new BadRequestException("Chỉ có thể hủy buổi tư vấn đang ở trạng thái 'Chờ xác nhận' hoặc 'Đã xác nhận'");
         }
 
         session.setStatus(SessionStatus.CANCELLED);
@@ -141,8 +141,33 @@ public class MentoringSessionServiceImpl implements MentoringSessionService {
     }
 
     @Override
+    @Transactional
+    public void confirmSession(Long sessionId, Long lecturerId) {
+        MentoringSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Buổi tư vấn không tồn tại"));
+
+        if (!session.getLecturer().getId().equals(lecturerId)) {
+            throw new BadRequestException("Bạn không có quyền xác nhận buổi tư vấn này");
+        }
+
+        if (session.getStatus() != SessionStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể xác nhận buổi tư vấn đang ở trạng thái 'Chờ xác nhận'");
+        }
+
+        session.setStatus(SessionStatus.CONFIRMED);
+        sessionRepository.save(session);
+    }
+
+    @Override
     public List<SessionResponse> getPendingSessionsByLecturer(Long lecturerId) {
         return sessionRepository.findByLecturerIdAndStatusWithDetails(lecturerId, SessionStatus.PENDING).stream()
+                .map(sessionMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SessionResponse> getConfirmedSessionsByLecturer(Long lecturerId) {
+        return sessionRepository.findByLecturerIdAndStatusWithDetails(lecturerId, SessionStatus.CONFIRMED).stream()
                 .map(sessionMapper::toResponse)
                 .collect(Collectors.toList());
     }

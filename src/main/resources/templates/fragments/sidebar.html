@@ -71,7 +71,17 @@
           th:href="@{/lecturer/pending-sessions}"
           th:class="'flex items-center gap-3 px-6 py-3 text-sm transition-all duration-200 border-l-4 ' + (${#strings.contains(requestURI, '/lecturer/pending')} ? 'text-slate-100 bg-cyan-500/10 border-cyan-500' : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-cyan-500/5')"
         >
-          <i class="fas fa-clipboard-list w-5 text-center"></i> Chờ đánh giá
+          <i class="fas fa-clock w-5 text-center"></i> Chờ xác nhận
+        </a>
+      </li>
+      <li
+        th:if="${currentUser != null && currentUser.role.name() == 'LECTURER'}"
+      >
+        <a
+          th:href="@{/lecturer/confirmed-sessions}"
+          th:class="'flex items-center gap-3 px-6 py-3 text-sm transition-all duration-200 border-l-4 ' + (${#strings.contains(requestURI, '/lecturer/confirmed')} ? 'text-slate-100 bg-cyan-500/10 border-cyan-500' : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-cyan-500/5')"
+        >
+          <i class="fas fa-clipboard-check w-5 text-center"></i> Chờ đánh giá
         </a>
       </li>
 

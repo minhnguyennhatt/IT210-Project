@@ -38,6 +38,16 @@ public interface MentoringSessionService {
     void cancelSessionByLecturer(Long sessionId, Long lecturerId, String reason);
 
     /**
+     * Giảng viên xác nhận lịch hẹn PENDING → CONFIRMED
+     */
+    void confirmSession(Long sessionId, Long lecturerId);
+
+    /**
+     * Danh sách sessions confirmed của giảng viên (chờ đánh giá)
+     */
+    List<SessionResponse> getConfirmedSessionsByLecturer(Long lecturerId);
+
+    /**
      * Lấy danh sách slot đã đặt trong ngày
      */
     List<LocalTime> getBookedSlots(Long lecturerId, LocalDate date);

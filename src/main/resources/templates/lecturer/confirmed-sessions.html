@@ -1,12 +1,12 @@
 <!doctype html>
 <html
   xmlns:th="http://www.thymeleaf.org"
-  th:replace="~{layouts/main-layout :: layout('Chờ xác nhận', ~{::content})}"
+  th:replace="~{layouts/main-layout :: layout('Đã xác nhận - Chờ đánh giá', ~{::content})}"
 >
   <div th:fragment="content">
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
-        <i class="fas fa-clock text-amber-400"></i> Sinh viên chờ xác nhận lịch hẹn
+        <i class="fas fa-clipboard-check text-emerald-400"></i> Đã xác nhận - Chờ đánh giá
       </h1>
     </div>
 
@@ -47,14 +47,12 @@
               ></td>
               <td class="text-right">
                 <div class="flex items-center justify-end gap-2">
-                  <form th:action="@{/lecturer/confirm-session/{id}(id=${s.id})}" method="post" class="inline-block">
-                    <button
-                      type="submit"
-                      class="inline-flex items-center gap-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      <i class="fas fa-check"></i> Xác nhận
-                    </button>
-                  </form>
+                  <a
+                    th:href="@{/lecturer/evaluate/{id}(id=${s.id})}"
+                    class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <i class="fas fa-edit"></i> Đánh giá
+                  </a>
                   <button
                     type="button"
                     th:onclick="'openCancelModal(' + ${s.id} + ')'"
@@ -73,8 +71,8 @@
         class="py-16 text-center text-slate-400"
         th:if="${sessions == null || sessions.isEmpty()}"
       >
-        <i class="fas fa-inbox text-5xl opacity-30 mb-4"></i>
-        <p class="text-lg">Không có sinh viên nào đang chờ xác nhận</p>
+        <i class="fas fa-check-double text-5xl opacity-30 mb-4"></i>
+        <p class="text-lg">Không có buổi tư vấn nào chờ đánh giá</p>
       </div>
     </div>
 

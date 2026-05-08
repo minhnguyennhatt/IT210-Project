@@ -117,6 +117,9 @@
                 <span class="badge-pending" th:if="${s.status == 'PENDING'}"
                   ><i class="fas fa-clock mr-1"></i> Chờ xác nhận</span
                 >
+                <span class="badge-dispatched" th:if="${s.status == 'CONFIRMED'}"
+                  ><i class="fas fa-check mr-1"></i> Đã xác nhận</span
+                >
                 <span class="badge-completed" th:if="${s.status == 'COMPLETED'}"
                   ><i class="fas fa-check-circle mr-1"></i> Hoàn thành</span
                 >

@@ -43,8 +43,8 @@ public class AcademicEvaluationServiceImpl implements AcademicEvaluationService 
         MentoringSession session = sessionRepository.findById(request.getMentoringSessionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Buổi tư vấn không tồn tại"));
 
-        if (session.getStatus() != SessionStatus.PENDING) {
-            throw new BadRequestException("Buổi tư vấn không ở trạng thái chờ xác nhận");
+        if (session.getStatus() != SessionStatus.CONFIRMED) {
+            throw new BadRequestException("Buổi tư vấn phải ở trạng thái 'Đã xác nhận' mới có thể đánh giá");
         }
 
         Lecturer lecturer = lecturerRepository.findById(lecturerId)
