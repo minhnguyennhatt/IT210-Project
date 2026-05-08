@@ -60,6 +60,23 @@ public class LecturerController {
         return "lecturer/evaluation-form";
     }
 
+    @PostMapping("/cancel-session/{sessionId}")
+    public String cancelSession(@PathVariable Long sessionId,
+                                @RequestParam String reason,
+                                HttpServletRequest request,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
+            Lecturer lecturer = lecturerRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Giảng viên không tồn tại"));
+            sessionService.cancelSessionByLecturer(sessionId, lecturer.getId(), reason);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã hủy buổi tư vấn thành công!");
+        } catch (BadRequestException | ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/lecturer/pending-sessions";
+    }
+
     @PostMapping("/evaluate")
     public String submitEvaluation(@ModelAttribute EvaluationRequest evaluationRequest,
                                    HttpServletRequest request,

@@ -120,6 +120,26 @@ public class MentoringSessionServiceImpl implements MentoringSessionService {
     }
 
     @Override
+    @Transactional
+    public void cancelSessionByLecturer(Long sessionId, Long lecturerId, String reason) {
+        MentoringSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Buổi tư vấn không tồn tại"));
+
+        if (!session.getLecturer().getId().equals(lecturerId)) {
+            throw new BadRequestException("Bạn không có quyền hủy buổi tư vấn này");
+        }
+
+        if (session.getStatus() != SessionStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể hủy buổi tư vấn đang ở trạng thái 'Chờ xác nhận'");
+        }
+
+        session.setStatus(SessionStatus.CANCELLED);
+        session.setCancelReason(reason);
+        session.setCancelledAt(LocalDateTime.now());
+        sessionRepository.save(session);
+    }
+
+    @Override
     public List<SessionResponse> getPendingSessionsByLecturer(Long lecturerId) {
         return sessionRepository.findByLecturerIdAndStatusWithDetails(lecturerId, SessionStatus.PENDING).stream()
                 .map(sessionMapper::toResponse)

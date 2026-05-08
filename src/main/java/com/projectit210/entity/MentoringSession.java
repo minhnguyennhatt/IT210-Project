@@ -54,6 +54,9 @@ public class MentoringSession {
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "cancel_reason", columnDefinition = "TEXT")
+    private String cancelReason;
+
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 

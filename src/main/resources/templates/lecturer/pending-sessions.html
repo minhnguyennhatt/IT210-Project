@@ -47,12 +47,21 @@
                 class="max-w-xs truncate text-slate-400"
               ></td>
               <td class="text-right">
-                <a
-                  th:href="@{/lecturer/evaluate/{id}(id=${s.id})}"
-                  class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                >
-                  <i class="fas fa-edit"></i> Đánh giá
-                </a>
+                <div class="flex items-center justify-end gap-2">
+                  <a
+                    th:href="@{/lecturer/evaluate/{id}(id=${s.id})}"
+                    class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <i class="fas fa-edit"></i> Đánh giá
+                  </a>
+                  <button
+                    type="button"
+                    th:onclick="'openCancelModal(' + ${s.id} + ')'"
+                    class="inline-flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <i class="fas fa-times-circle"></i> Hủy hẹn
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -67,5 +76,73 @@
         <p class="text-lg">Không có sinh viên nào đang chờ đánh giá</p>
       </div>
     </div>
+
+    <div
+      id="cancelModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm"
+    >
+      <div class="glass-card w-full max-w-md mx-4 p-6">
+        <h3
+          class="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2"
+        >
+          <i class="fas fa-exclamation-triangle text-rose-400"></i> Xác nhận hủy
+          buổi tư vấn
+        </h3>
+        <form id="cancelForm" method="post" action="">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-300 mb-2"
+              >Lý do hủy <span class="text-rose-400">*</span></label
+            >
+            <textarea
+              id="cancelReason"
+              name="reason"
+              rows="4"
+              required
+              class="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-colors resize-none"
+              placeholder="Nhập lý do hủy buổi tư vấn..."
+            ></textarea>
+          </div>
+          <div class="flex justify-end gap-3">
+            <button
+              type="button"
+              onclick="closeCancelModal()"
+              class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 bg-slate-700/30 hover:bg-slate-700/50 border border-slate-600/30 transition-colors"
+            >
+              Đóng
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-rose-500/80 hover:bg-rose-500 border border-rose-500/50 transition-colors"
+            >
+              <i class="fas fa-times-circle mr-1"></i> Xác nhận hủy
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function openCancelModal(sessionId) {
+        const modal = document.getElementById("cancelModal");
+        const form = document.getElementById("cancelForm");
+        form.action = "/lecturer/cancel-session/" + sessionId;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.getElementById("cancelReason").value = "";
+        document.getElementById("cancelReason").focus();
+      }
+
+      function closeCancelModal() {
+        const modal = document.getElementById("cancelModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      document
+        .getElementById("cancelModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeCancelModal();
+        });
+    </script>
   </div>
 </html>

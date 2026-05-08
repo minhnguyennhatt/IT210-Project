@@ -33,6 +33,11 @@ public interface MentoringSessionService {
     List<SessionResponse> getPendingSessionsByLecturer(Long lecturerId);
 
     /**
+     * Giảng viên hủy buổi tư vấn kèm lý do
+     */
+    void cancelSessionByLecturer(Long sessionId, Long lecturerId, String reason);
+
+    /**
      * Lấy danh sách slot đã đặt trong ngày
      */
     List<LocalTime> getBookedSlots(Long lecturerId, LocalDate date);
