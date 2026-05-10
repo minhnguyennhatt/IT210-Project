@@ -62,4 +62,46 @@ public interface MentoringSessionRepository extends JpaRepository<MentoringSessi
            "AND s.status <> 'CANCELLED'")
     List<MentoringSession> findBookedSlots(@Param("lecturerId") Long lecturerId,
                                            @Param("sessionDate") LocalDate sessionDate);
+
+    // ===================== DASHBOARD STATISTICS QUERIES (Advanced SQL) =====================
+
+    /**
+     * Top 5 giảng viên có lượt tư vấn nhiều nhất
+     * Sử dụng JOIN nhiều bảng (mentoring_sessions → lecturers → users) + GROUP BY + HAVING + ORDER BY
+     * Trả về mảng Object[]: [lecturerName, sessionCount]
+     *
+     * SQL tương đương:
+     * SELECT u.full_name, COUNT(ms.id) AS session_count
+     * FROM mentoring_sessions ms
+     * INNER JOIN lecturers l ON ms.lecturer_id = l.id
+     * INNER JOIN users u ON l.user_id = u.id
+     * WHERE ms.status <> 'CANCELLED'
+     * GROUP BY l.id, u.full_name
+     * HAVING COUNT(ms.id) > 0
+     * ORDER BY session_count DESC
+     * LIMIT 5
+     */
+    @Query("SELECT u.fullName, COUNT(s) " +
+           "FROM MentoringSession s " +
+           "JOIN s.lecturer l " +
+           "JOIN l.user u " +
+           "WHERE s.status <> 'CANCELLED' " +
+           "GROUP BY l.id, u.fullName " +
+           "HAVING COUNT(s) > 0 " +
+           "ORDER BY COUNT(s) DESC " +
+           "LIMIT 5")
+    List<Object[]> findTop5LecturersBySessionCount();
+
+    /**
+     * Thống kê số lượng session theo từng trạng thái (GROUP BY)
+     * Trả về mảng Object[]: [status, count]
+     */
+    @Query("SELECT s.status, COUNT(s) FROM MentoringSession s GROUP BY s.status")
+    List<Object[]> countGroupByStatus();
+
+    /**
+     * Tổng số buổi tư vấn (không bị hủy)
+     */
+    @Query("SELECT COUNT(s) FROM MentoringSession s WHERE s.status <> 'CANCELLED'")
+    long countActiveSessions();
 }

@@ -36,4 +36,30 @@ public interface BorrowingRecordRepository extends JpaRepository<BorrowingRecord
            "LEFT JOIN FETCH d.equipment " +
            "ORDER BY b.createdAt DESC")
     List<BorrowingRecord> findAllWithDetails();
+
+    // ===================== DASHBOARD STATISTICS QUERIES (Advanced SQL) =====================
+
+    /**
+     * Đếm số lượng phiếu mượn đang được mượn (trạng thái DISPATCHED)
+     * Sử dụng JPQL trực tiếp để đếm từ database, không dùng for-loop
+     */
+    @Query("SELECT COUNT(b) FROM BorrowingRecord b WHERE b.status = 'DISPATCHED'")
+    long countDispatched();
+
+    /**
+     * Thống kê số lượng phiếu mượn theo từng trạng thái (GROUP BY)
+     * Trả về mảng Object[]: [status, count]
+     */
+    @Query("SELECT b.status, COUNT(b) FROM BorrowingRecord b GROUP BY b.status")
+    List<Object[]> countGroupByStatus();
+
+    /**
+     * Tổng số lượng thiết bị đang được mượn (SUM + JOIN + GROUP BY)
+     * JOIN borrowing_details để lấy tổng số lượng thiết bị đang ở trạng thái DISPATCHED
+     */
+    @Query("SELECT COALESCE(SUM(d.quantity), 0) " +
+           "FROM BorrowingDetail d " +
+           "JOIN d.borrowingRecord b " +
+           "WHERE b.status = 'DISPATCHED'")
+    long sumBorrowedEquipmentQuantity();
 }

@@ -3,6 +3,7 @@ package com.projectit210.repository;
 import com.projectit210.entity.User;
 import com.projectit210.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +23,11 @@ public interface UserRepository extends JpaRepository<User, String> {
     List<User> findByRole(Role role);
 
     List<User> findByIsActiveTrue();
+
+    // ===================== DASHBOARD STATISTICS QUERIES =====================
+
+    /**
+     * Đếm số lượng user theo role trực tiếp từ database (không cần load tất cả records)
+     */
+    long countByRole(Role role);
 }

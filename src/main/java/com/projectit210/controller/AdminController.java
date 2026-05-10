@@ -10,6 +10,7 @@ import com.projectit210.exception.BadRequestException;
 import com.projectit210.repository.DepartmentRepository;
 import com.projectit210.repository.LecturerRepository;
 import com.projectit210.service.BorrowingService;
+import com.projectit210.service.DashboardService;
 import com.projectit210.service.DepartmentService;
 import com.projectit210.service.EquipmentService;
 import com.projectit210.service.UserService;
@@ -38,15 +39,43 @@ public class AdminController {
     private final DepartmentRepository departmentRepository;
     private final DepartmentService departmentService;
     private final PasswordEncoder passwordEncoder;
+    private final DashboardService dashboardService;
 
     @GetMapping("/dashboard")
     public String dashboard(HttpServletRequest request, Model model) {
         User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
         model.addAttribute("user", user);
         model.addAttribute("pendingBorrowings", borrowingService.getPendingDispatch());
+
+        // ===================== DASHBOARD STATISTICS =====================
+        // Tất cả thống kê đều lấy trực tiếp từ Database bằng SQL nâng cao
+        // (JOIN, GROUP BY, HAVING, SUM, COUNT, ORDER BY)
+        // Không sử dụng vòng lặp for trong Java để tính toán tổng
+
+        // Thống kê cơ bản (sử dụng COUNT query trực tiếp từ DB)
         model.addAttribute("totalEquipments", equipmentService.findAll().size());
-        model.addAttribute("totalStudents", userService.findByRole(Role.STUDENT).size());
-        model.addAttribute("totalLecturers", userService.findByRole(Role.LECTURER).size());
+        model.addAttribute("totalStudents", dashboardService.countStudents());
+        model.addAttribute("totalLecturers", dashboardService.countLecturers());
+
+        // Thống kê thiết bị đang mượn (sử dụng COUNT + SUM từ DB)
+        model.addAttribute("borrowedRecordCount", dashboardService.countBorrowedEquipments());
+        model.addAttribute("borrowedEquipmentQuantity", dashboardService.sumBorrowedEquipmentQuantity());
+
+        // Thống kê buổi tư vấn (sử dụng COUNT từ DB)
+        model.addAttribute("totalActiveSessions", dashboardService.countActiveSessions());
+
+        // Top 5 giảng viên (JOIN + GROUP BY + HAVING + ORDER BY từ DB)
+        model.addAttribute("top5Lecturers", dashboardService.getTop5Lecturers());
+
+        // Thống kê phiếu mượn theo trạng thái (GROUP BY từ DB)
+        model.addAttribute("borrowingStatsByStatus", dashboardService.getBorrowingStatsByStatus());
+
+        // Thống kê session theo trạng thái (GROUP BY từ DB)
+        model.addAttribute("sessionStatsByStatus", dashboardService.getSessionStatsByStatus());
+
+        // Thống kê thiết bị đang mượn theo loại (JOIN + GROUP BY + SUM từ DB)
+        model.addAttribute("borrowedByEquipmentStats", dashboardService.getBorrowedByEquipmentStats());
+
         return "admin/dashboard";
     }
 
