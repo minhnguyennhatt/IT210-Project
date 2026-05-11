@@ -402,6 +402,7 @@ public class AdminController {
     public String borrowingManagement(Model model) {
         model.addAttribute("borrowings", borrowingService.getAllBorrowings());
         model.addAttribute("pendingBorrowings", borrowingService.getPendingDispatch());
+        model.addAttribute("dispatchedBorrowings", borrowingService.getDispatched());
         return "admin/borrowing-management";
     }
 
@@ -427,6 +428,20 @@ public class AdminController {
             User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
             borrowingService.rejectBorrowing(id, user.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Đã từ chối phiếu mượn!");
+        } catch (BadRequestException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/borrowings";
+    }
+
+    @PostMapping("/borrowings/{id}/return")
+    public String returnEquipment(@PathVariable Long id,
+                                  HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
+            borrowingService.returnEquipment(id, user.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Xác nhận trả thiết bị thành công!");
         } catch (BadRequestException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

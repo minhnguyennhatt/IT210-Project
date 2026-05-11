@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,5 +104,35 @@ public class BorrowingServiceImpl implements BorrowingService {
     public List<BorrowingResponse> getByStudent(String studentId) {
         return borrowingRecordRepository.findByStudentId(studentId)
                 .stream().map(borrowingMapper::toResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BorrowingResponse> getDispatched() {
+        return borrowingRecordRepository.findByStatusWithDetails(BorrowStatus.DISPATCHED)
+                .stream().map(borrowingMapper::toResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void returnEquipment(Long borrowingRecordId, String adminId) {
+        BorrowingRecord record = borrowingRecordRepository.findById(borrowingRecordId)
+                .orElseThrow(() -> new ResourceNotFoundException("Phiếu mượn không tồn tại"));
+
+        if (record.getStatus() != BorrowStatus.DISPATCHED) {
+            throw new BadRequestException("Phiếu mượn không ở trạng thái đã xuất kho");
+        }
+
+        // Hoàn trả tồn kho cho tất cả thiết bị trong phiếu mượn
+        List<BorrowingDetail> details = borrowingDetailRepository
+                .findByBorrowingRecordIdWithEquipment(borrowingRecordId);
+
+        for (BorrowingDetail detail : details) {
+            inventoryService.restoreStock(detail.getEquipment().getId(), detail.getQuantity());
+        }
+
+        // Cập nhật trạng thái và ngày trả thực tế
+        record.setStatus(BorrowStatus.RETURNED);
+        record.setActualReturnDate(LocalDate.now());
+        borrowingRecordRepository.save(record);
     }
 }

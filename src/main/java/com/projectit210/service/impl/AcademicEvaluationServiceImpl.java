@@ -65,8 +65,13 @@ public class AcademicEvaluationServiceImpl implements AcademicEvaluationService 
                 .build();
         evaluationRepository.save(evaluation);
 
-        // Bước 3: Tạo phiếu mượn nếu có thiết bị
-        if (request.getEquipmentItems() != null && !request.getEquipmentItems().isEmpty()) {
+        // Bước 3: Tạo phiếu mượn chỉ khi có ít nhất 1 thiết bị với số lượng > 0
+        boolean hasValidEquipment = request.getEquipmentItems() != null &&
+                request.getEquipmentItems().stream()
+                        .anyMatch(item -> item.getEquipmentId() != null &&
+                                item.getQuantity() != null && item.getQuantity() > 0);
+
+        if (hasValidEquipment) {
             BorrowingRecord record = BorrowingRecord.builder()
                     .mentoringSession(session)
                     .student(session.getStudent())

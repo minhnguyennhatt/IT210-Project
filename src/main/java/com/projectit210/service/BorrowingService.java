@@ -33,4 +33,14 @@ public interface BorrowingService {
      * Phiếu mượn của sinh viên
      */
     List<BorrowingResponse> getByStudent(String studentId);
+
+    /**
+     * Danh sách phiếu mượn đã xuất kho (đang mượn)
+     */
+    List<BorrowingResponse> getDispatched();
+
+    /**
+     * Xác nhận trả thiết bị - hoàn trả tồn kho & đổi trạng thái (CORE-08) - Transaction
+     */
+    void returnEquipment(Long borrowingRecordId, String adminId);
 }

@@ -123,6 +123,98 @@
       </div>
     </div>
 
+    <!-- Dispatched (Đang mượn - Cần thu hồi) -->
+    <div
+      class="glass-card overflow-hidden mb-8"
+      th:if="${dispatchedBorrowings != null && !dispatchedBorrowings.isEmpty()}"
+    >
+      <div class="p-6 border-b border-blue-500/20 bg-blue-500/5">
+        <h2
+          class="text-lg font-semibold text-blue-400 flex items-center gap-2"
+        >
+          <i class="fas fa-undo-alt"></i> Đang mượn - Cần thu hồi
+        </h2>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <div
+          th:each="b : ${dispatchedBorrowings}"
+          class="border border-blue-500/20 bg-slate-900/50 rounded-xl p-5 shadow-inner"
+        >
+          <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
+            <div>
+              <div class="text-lg text-slate-100 mb-1">
+                <span class="font-mono text-blue-500"
+                  >#<span th:text="${b.id}"></span></span>
+                <span class="text-slate-500 mx-2">|</span>
+                Sinh viên:
+                <span
+                  th:text="${b.studentName}"
+                  class="font-semibold text-indigo-300"
+                ></span>
+              </div>
+              <div class="text-sm text-slate-400 flex gap-4">
+                <span
+                  ><i class="far fa-calendar-alt mr-1"></i> Mượn:
+                  <span th:text="${b.borrowDate}" class="text-slate-300"></span></span>
+                <span
+                  ><i class="far fa-calendar-check mr-1"></i> Trả dự kiến:
+                  <span
+                    th:text="${b.expectedReturnDate}"
+                    class="text-slate-300"
+                  ></span></span>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <form
+                th:action="@{/admin/borrowings/{id}/return(id=${b.id})}"
+                method="post"
+                onsubmit="return confirm('Xác nhận thu hồi thiết bị cho phiếu này?');"
+              >
+                <button
+                  type="submit"
+                  class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  <i class="fas fa-undo-alt"></i> Xác nhận trả
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div
+            th:if="${b.details != null && !b.details.isEmpty()}"
+            class="mt-4 rounded-lg overflow-hidden border border-slate-700/50"
+          >
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-800/80 text-slate-400">
+                <tr>
+                  <th class="p-3 font-medium">Thiết bị</th>
+                  <th class="p-3 font-medium">Mã</th>
+                  <th class="p-3 font-medium text-center">Số lượng mượn</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-700/50">
+                <tr th:each="d : ${b.details}" class="bg-slate-900/30">
+                  <td
+                    th:text="${d.equipmentName}"
+                    class="p-3 text-slate-200"
+                  ></td>
+                  <td
+                    th:text="${d.equipmentCode}"
+                    class="p-3 font-mono text-xs text-indigo-300"
+                  ></td>
+                  <td
+                    th:text="${d.quantity}"
+                    class="p-3 text-center font-bold text-slate-200"
+                  ></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- All -->
     <div class="glass-card overflow-hidden">
       <div class="p-6 border-b border-indigo-500/10">
@@ -145,6 +237,7 @@
               <th>Ngày mượn</th>
               <th>Trả dự kiến</th>
               <th>Trạng thái</th>
+              <th>Ngày trả thực tế</th>
             </tr>
           </thead>
           <tbody>
@@ -176,6 +269,17 @@
                 <span class="badge-cancelled" th:if="${b.status == 'REJECTED'}"
                   >Từ chối</span
                 >
+              </td>
+              <td>
+                <span
+                  th:if="${b.actualReturnDate != null}"
+                  th:text="${b.actualReturnDate}"
+                  class="text-emerald-400"
+                ></span>
+                <span
+                  th:if="${b.actualReturnDate == null}"
+                  class="text-slate-500"
+                  >—</span>
               </td>
             </tr>
           </tbody>
