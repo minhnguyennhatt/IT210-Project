@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @Builder
 public class ProfileUpdateRequest {
 
+    private String username;
+    private String email;
     private String fullName;
     private String phone;
     private String gender; // MALE, FEMALE, OTHER

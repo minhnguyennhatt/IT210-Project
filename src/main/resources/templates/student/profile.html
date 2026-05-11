@@ -11,24 +11,38 @@
     </div>
 
     <div class="glass-card max-w-4xl p-8">
+      <!-- Flash messages -->
+      <div th:if="${successMessage}" class="mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-2">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div th:if="${errorMessage}" class="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
       <form th:action="@{/profile}" method="post" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="form-label">Tên đăng nhập</label>
+            <label for="username" class="form-label">Tên đăng nhập</label>
             <input
               type="text"
+              id="username"
+              name="username"
               th:value="${user.username}"
-              disabled
-              class="form-input opacity-60 cursor-not-allowed"
+              class="form-input"
+              required
             />
           </div>
           <div>
-            <label class="form-label">Email</label>
+            <label for="email" class="form-label">Email</label>
             <input
-              type="text"
+              type="email"
+              id="email"
+              name="email"
               th:value="${user.email}"
-              disabled
-              class="form-input opacity-60 cursor-not-allowed"
+              class="form-input"
+              required
             />
           </div>
         </div>

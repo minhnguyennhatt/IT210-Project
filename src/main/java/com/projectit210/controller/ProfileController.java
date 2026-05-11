@@ -3,6 +3,7 @@ package com.projectit210.controller;
 import com.projectit210.constant.AppConstant;
 import com.projectit210.dto.request.ProfileUpdateRequest;
 import com.projectit210.entity.User;
+import com.projectit210.exception.ConflictException;
 import com.projectit210.service.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,12 @@ public class ProfileController {
                                 HttpServletRequest request,
                                 RedirectAttributes redirectAttributes) {
         User user = (User) request.getAttribute(AppConstant.CURRENT_USER);
-        profileService.updateProfile(user.getId(), profileUpdateRequest);
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật hồ sơ thành công!");
+        try {
+            profileService.updateProfile(user.getId(), profileUpdateRequest);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật hồ sơ thành công!");
+        } catch (ConflictException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
         return "redirect:/profile";
     }
 }
