@@ -33,5 +33,7 @@ public class AcademicHistoryResponse {
         private String equipmentName;
         private String equipmentCode;
         private Integer quantity;
+        private LocalDate expectedReturnDate;
+        private String status;
     }
 }

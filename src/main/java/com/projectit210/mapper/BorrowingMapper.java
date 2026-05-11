@@ -56,6 +56,8 @@ public class BorrowingMapper {
                             .equipmentName(d.getEquipment().getName())
                             .equipmentCode(d.getEquipment().getCode())
                             .quantity(d.getQuantity())
+                            .expectedReturnDate(record.getExpectedReturnDate())
+                            .status(record.getStatus().name())
                             .build())
                     .collect(Collectors.toList());
         }
